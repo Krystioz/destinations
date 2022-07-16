@@ -4,24 +4,12 @@
 	import Footer from './components/footer.svelte';
 </script>
 
-<header><Header /></header>
-
-<slot />
-<Footer />
+<div class="flex h-screen flex-col justify-between">
+	<Header />
+	<slot />
+	<Footer />
+</div>
 
 <style>
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-		min-height: 100vh;
-		position: relative;
-	}
-	:global(footer) {
-		margin-top: auto;
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-	}
+
 </style>

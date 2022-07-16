@@ -1,9 +1,9 @@
-<footer class="footer mt-20 footer-center p-5 bg-base-200 text-base-content">
+<footer class="footer footer-center h-36 gap-5 bg-base-200 p-5 text-base-content ">
 	<div class="grid grid-flow-col gap-4">
-		<a class="link link-hover">About us</a>
-		<a class="link link-hover">Contact</a>
-		<a class="link link-hover">Jobs</a>
-		<a class="link link-hover">Press kit</a>
+		<a href="/" class="link link-hover">About us</a>
+		<a href="/" class="link link-hover">Contact</a>
+		<a href="/" class="link link-hover">Jobs</a>
+		<a href="/" class="link link-hover">Press kit</a>
 	</div>
 	<div>
 		<div class="grid grid-flow-col gap-4">
