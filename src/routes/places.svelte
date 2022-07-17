@@ -20,13 +20,14 @@
 	// const analytics = getAnalytics(app);
 	const db = getDatabase(app);
 	let gotdata = false;
+	let score = 1;
 
 	const countries = ref(db, '/Countries');
 	onValue(countries, (snapshot) => {
 		const data = snapshot.val();
 	});
 
-	let Countries;
+	let Countries: JSON;
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
 		gotdata = true;
@@ -52,9 +53,9 @@
 	let promisePlaces = fetchPlaces();
 
 	function getPlaces() {
-		let promisePlaces = fetchPlaces();
+		promisePlaces = fetchPlaces();
+		console.log(promisePlaces);
 		return promisePlaces;
-		console.log(Countries);
 	}
 
 	//  "xid": "W202593695",
@@ -74,57 +75,63 @@
 	// 	}
 </script>
 
-<section class="mb-10 flex flex-col justify-between gap-1">
-	<div class="prose mx-auto mt-12 flex flex-col items-center text-center">
-		<h2>Welcome to the destination searcher !</h2>
-		<h3>I hope you will have fun</h3>
+<section class="mb-auto flex flex-col justify-between gap-1">
+	<div
+		class="flex w-full flex-col items-center bg-[url('http://placeimg.com/1000/600/nature')] text-center"
+	>
+		<div class="prose my-5">
+			<h2 class="w-full">Welcome to the destination searcher !</h2>
+			<h3 class="w-full">I hope you will have fun</h3>
+		</div>
 	</div>
-	<div class="divider">Look around</div>
-
-	<nav class="mx-10 mb-8 flex flex-row items-center justify-center gap-9">
-		<select class="select select-bordered select-sm w-44 max-w-xs">
-			<option disabled selected>Państwa</option>
-			{#if gotdata}
-				{#each Object.values(Countries) as country}
-					<option>{country.translations.pol.official}</option>
-				{/each}
-			{:else}
-				<option>Loading your data</option>
-			{/if}
-		</select>
-		<button on:click={getPlaces} class="btn btn-success">Search</button>
-		<!-- The button to open modal -->
-	</nav>
-
-
-	<label for="my-modal-3" class="modal-button btn w-24">open modal</label>
-	<!-- Put this part before </body> tag -->
-	<input type="checkbox" id="my-modal-3" class="modal-toggle" />
-	<div class="modal">
-		<div class="modal-box relative h-80">
-			<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
-			<h3 class="text-lg font-bold">Wybierz państwo</h3>
-			{#if gotdata}
-				{#each Object.values(Countries) as country}
-					<a class="text-xs link m-2">{country.translations.pol.official}</a>
-				{/each}
-			{:else}
-				<p>Loading your data</p>
-			{/if}
+	<div class="divider mt-0">Odkrywaj</div>
+	<div class="flex flex-row justify-center align-middle">
+		<div class="collapse bg-slate-50">
+			<input class="px-0" type="checkbox" />
+			<div
+				class="collapse-title bg-gradient-to-r from-green-400 to-orange-400 bg-clip-text px-0 text-center text-2xl text-xl font-extrabold font-medium text-transparent"
+			>
+				Rozwiń panel szukania
+			</div>
+			<div class="collapse-content gap-5 lg:gap-24 flex flex-row flex-wrap items-center justify-between">
+				<div class="flex flex-col items-center">
+					<label for="xs">Popularność: {score}</label>
+					<input id="xs" bind:value={score} type="range" min="1" max="3" class="range range-xs" />
+				</div>
+				<!-- <select class="select mx-2 select-bordered select-sm w-44 max-w-xs">
+					<option disabled selected>Państwa</option>
+					{#if gotdata}
+						{#each Object.values(Countries) as country}
+							<option>{country.translations.pol.official}</option>
+						{/each}
+					{:else}
+						<option>Loading your data</option>
+					{/if}
+				</select> -->
+				<button on:click={getPlaces} class="btn btn-success mx-2">szukaj</button>
+				<div>
+					<label for="my-modal-3" class="modal-button btn mx-2 w-24">Wybierz państwo</label>
+					<!-- Put this part before </body> tag -->
+					<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative h-80">
+							<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
+							<h3 class="text-lg font-bold">Wybierz państwo</h3>
+							{#if gotdata}
+								{#each Object.values(Countries) as country}
+									<p href="" class="link m-2 text-xs">{country.translations.pol.official}</p>
+								{/each}
+							{:else}
+								<p>Loading your data</p>
+							{/if}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<div class="collapse bg-slate-50">
-  <input type="checkbox" /> 
-  <div class="collapse-title text-xl font-medium">
-    Click me to show/hide content
-  </div>
-  <div class="collapse-content"> 
-    <p>tabindex="0" attribute is necessary to make the div focusable</p>
-  </div>
-</div>
-
-	<!-- {#await promisePlaces}
+	{#await promisePlaces}
 		<h3>Loading your places</h3>
 	{:then places}
 		<div class="flex w-auto mx-2 flex-row flex-wrap align-middle gap-4 mb-10">
@@ -154,5 +161,5 @@
 		</div>
 	{:catch Error}
 		<h2 class="text-center">error loading data : {Error.message}</h2>
-	{/await} -->
+	{/await}
 </section>

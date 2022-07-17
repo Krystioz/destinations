@@ -101,7 +101,7 @@
 					<li><a href="/">Item 3</a></li>
 				</ul>
 			</div>
-			<a href="/" class="btn btn-ghost text-xl normal-case">daisyUI</a>
+			<a href="/" class="btn btn-ghost text-xl normal-case">Destinations</a>
 		</div>
 		<div class="navbar-center hidden lg:flex">
 			<ul class="menu menu-horizontal z-10 p-0">
@@ -145,7 +145,7 @@
 							aria-expanded="true"
 							aria-haspopup="true"
 						>
-							Themes
+							Motywy
 							<!-- Heroicon name: solid/chevron-down -->
 							<svg
 								class="-mr-1 ml-2 h-5 w-5"
