@@ -4,6 +4,7 @@
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get } from 'firebase/database';
 	import { getAnalytics, logEvent } from 'firebase/analytics';
+	import { fly } from 'svelte/transition';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCsEUT-SULj3zJGSNxWGxnPCuOB8EXh4MQ',
@@ -19,43 +20,71 @@
 	const app = initializeApp(firebaseConfig);
 	// const analytics = getAnalytics(app);
 	const db = getDatabase(app);
-	let gotdata = false;
-	let score = 1;
+	let gotdata: boolean = false;
+	let gotCountries: boolean = false;
+	let score: number = 1;
+	let lat: number;
+	let lang: number;
+	let limit: number = 1;
+	let radius: number = 1;
+	let categories: Array<any> = [
+		'natural',
+		'other',
+		'religion',
+		'historical',
+		'sport',
+		'architecture'
+	];
+	let cat: Array<any> = [];
 
 	const countries = ref(db, '/Countries');
-	onValue(countries, (snapshot) => {
-		const data = snapshot.val();
-	});
-
 	let Countries: JSON;
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
-		gotdata = true;
+		gotCountries = true;
 	});
 
 	// historical%2Cnature%2Cmonuments%2Czoos
 	const fetchPlaces = async (
 		longitude: number,
 		latitude: number,
-		categories: string,
+		cat: string,
 		rate: number,
 		radius: number,
 		limit: number
 	) => {
 		var response = await fetch(
-			`https://api.opentripmap.com/0.1/en/places/radius?radius=${radius}&lon=${longitude}&lat=${latitude}&limit=${limit}&rate=${rate}&kinds=${categories}&apikey=5ae2e3f221c38a28845f05b606b3b76d805d8dd89180dcbbbbcbdbf8`
+			`https://api.opentripmap.com/0.1/en/places/radius?radius=${radius}&lon=${longitude}&lat=${latitude}&limit=${limit}&rate=${rate}&kinds=${cat}&apikey=5ae2e3f221c38a28845f05b606b3b76d805d8dd89180dcbbbbcbdbf8`
 		);
 
 		var result = await response.json();
 		return result;
 	};
 
-	let promisePlaces = fetchPlaces();
+	let promisePlaces: Promise<any>;
 
-	function getPlaces() {
-		promisePlaces = fetchPlaces();
+	function getPlaces(
+		longitude: number,
+		latitude: number,
+		cat: string,
+		rate: number,
+		radius: number,
+		limit: number
+	) {
+		promisePlaces = fetchPlaces(longitude, latitude, cat, rate, radius, limit);
+		gotdata = true;
 		console.log(promisePlaces);
 		return promisePlaces;
+	}
+
+	function checkCat(categry: string) {
+		if (cat.indexOf(categry) == -1) {
+			cat.push(categry);
+		} else {
+			cat.pop(categry);
+		}
+		console.log(cat.indexOf(categry));
+		console.log(cat);
 	}
 
 	//  "xid": "W202593695",
@@ -89,26 +118,37 @@
 		<div class="collapse bg-slate-50">
 			<input class="px-0" type="checkbox" />
 			<div
-				class="collapse-title bg-gradient-to-r from-green-400 to-orange-400 bg-clip-text px-0 text-center text-2xl text-xl font-extrabold font-medium text-transparent"
+				class="collapse-title bg-gradient-to-r from-green-400 to-orange-400 bg-clip-text px-0 text-center text-2xl font-extrabold text-transparent"
 			>
 				Rozwiń panel szukania
 			</div>
-			<div class="collapse-content gap-5 lg:gap-24 flex flex-row flex-wrap items-center justify-between">
+			<div
+				class="collapse-content flex flex-row flex-wrap items-center justify-between gap-5 lg:gap-24"
+			>
 				<div class="flex flex-col items-center">
 					<label for="xs">Popularność: {score}</label>
 					<input id="xs" bind:value={score} type="range" min="1" max="3" class="range range-xs" />
 				</div>
-				<!-- <select class="select mx-2 select-bordered select-sm w-44 max-w-xs">
-					<option disabled selected>Państwa</option>
-					{#if gotdata}
-						{#each Object.values(Countries) as country}
-							<option>{country.translations.pol.official}</option>
-						{/each}
-					{:else}
-						<option>Loading your data</option>
-					{/if}
-				</select> -->
-				<button on:click={getPlaces} class="btn btn-success mx-2">szukaj</button>
+				<div class="flex flex-col items-center">
+					<label for="xs">Wyniki: {limit}</label>
+					<input id="xs" bind:value={limit} type="range" min="1" max="6" class="range range-xs" />
+				</div>
+				<div class="flex flex-col items-center">
+					<label for="xs">Zasięg: {radius}m</label>
+					<input
+						id="xs"
+						bind:value={radius}
+						type="range"
+						min="1000"
+						max="20000"
+						class="range range-xs"
+					/>
+				</div>
+
+				<button
+					on:click={() => getPlaces(lang, lat, cat.join(), score, radius, limit)}
+					class="btn btn-success mx-2">szukaj</button
+				>
 				<div>
 					<label for="my-modal-3" class="modal-button btn mx-2 w-24">Wybierz państwo</label>
 					<!-- Put this part before </body> tag -->
@@ -117,9 +157,19 @@
 						<div class="modal-box relative h-80">
 							<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
 							<h3 class="text-lg font-bold">Wybierz państwo</h3>
-							{#if gotdata}
+							{#if gotCountries}
 								{#each Object.values(Countries) as country}
-									<p href="" class="link m-2 text-xs">{country.translations.pol.official}</p>
+									<p
+										on:click={() => {
+											lat = country.latlng[0];
+											lang = country.latlng[1];
+											console.log(lat, lang);
+										}}
+										href=""
+										class="link m-2 text-xs"
+									>
+										{country.translations.pol.official}
+									</p>
 								{/each}
 							{:else}
 								<p>Loading your data</p>
@@ -127,39 +177,65 @@
 						</div>
 					</div>
 				</div>
+
+				<div>
+					<label for="my-modal-4" class="modal-button btn mx-2 w-24">Kategorie</label>
+					<!-- Put this part before </body> tag -->
+					<input type="checkbox" id="my-modal-4" class="modal-toggle" />
+					<div class="modal">
+						<div class="modal-box relative h-80 px-24">
+							<label for="my-modal-4" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
+							<h3 class="text-lg font-bold">Wybierz Kategorie</h3>
+							<div class="form-control">
+								{#each categories as category}
+									<label class="label cursor-pointer">
+										<span class="label-text">{category}</span>
+										<input
+											on:change={() => checkCat(category)}
+											type="checkbox"
+											class="checkbox checkbox-primary"
+										/>
+									</label>
+								{/each}
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
 
-	{#await promisePlaces}
-		<h3>Loading your places</h3>
-	{:then places}
-		<div class="flex w-auto mx-2 flex-row flex-wrap align-middle gap-4 mb-10">
-			{#each places.features as place}
-				<div class="card-compact card w-96 bg-base-100 shadow-xl">
-					<figure>
-						<img
-							class="object-fill w-96"
-							src="http://placeimg.com/640/480/any"
-							alt="nature images"
-						/>
-					</figure>
-					<div class="card-body">
-						<h2 class="card-title">{place.id}</h2>
-						{#if place.properties.name == ''}
-							<p>Brak opisu</p>
-						{:else}
-							<p>{place.properties.name}</p>
-						{/if}
+	{#if gotdata}
+		{#await promisePlaces}
+			<h3>Loading your places</h3>
+		{:then places}
+			<div in:fly out:fly class="flex w-auto mx-2 flex-row flex-wrap align-middle gap-4 mb-10">
+				{#each places.features as place}
+					<div class="card-compact card w-96 bg-base-100 shadow-xl">
+						<figure>
+							<img
+								class="object-fill w-96"
+								src="http://placeimg.com/640/480/any"
+								alt="nature images"
+							/>
+						</figure>
+						<div class="card-body">
+							<h2 class="card-title">{place.id}</h2>
+							{#if place.properties.name == ''}
+								<p>Brak opisu</p>
+							{:else}
+								<p>{place.properties.name}</p>
+							{/if}
 
-						<div class="card-actions justify-end">
-							<button class="btn-xs rounded-lg btn-primary">Zobacz więcej</button>
+							<div class="card-actions justify-end">
+								<button class="btn-xs rounded-lg btn-primary">Zobacz więcej</button>
+							</div>
 						</div>
 					</div>
-				</div>
-			{/each}
-		</div>
-	{:catch Error}
-		<h2 class="text-center">error loading data : {Error.message}</h2>
-	{/await}
+				{/each}
+			</div>
+		{:catch Error}
+			<h2 class="text-center">error loading data : {Error.message}</h2>
+		{/await}
+	{/if}
 </section>
