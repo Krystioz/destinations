@@ -76,32 +76,7 @@
 		console.log(promisePlaces);
 		return promisePlaces;
 	}
-
-	function checkCat(categry: string) {
-		if (cat.indexOf(categry) == -1) {
-			cat.push(categry);
-		} else {
-			cat.pop(categry);
-		}
-		console.log(cat.indexOf(categry));
-		console.log(cat);
-	}
-
-	//  "xid": "W202593695",
-	// "name": "Museu del Tabac",
-	// "dist": 89.15736524,
-	// "rate": 3,
-	// "osm": "way/202593695",
-	// "wikidata": "Q2912611",
-	// "kinds": "cultural,museums,interesting_places,other_museums",
-	// "point": {
-	//   "lon": 1.4915251731872559,
-	//   "lat": 42.46450424194336
-	// //saving places to my db
-	// N376290602
-	// 	function writePlacesData(xid, cords,id,properties){
-	// let c=""
-	// 	}
+	
 </script>
 
 <section class="mb-auto flex flex-col justify-between gap-1">
@@ -191,9 +166,10 @@
 									<label class="label cursor-pointer">
 										<span class="label-text">{category}</span>
 										<input
-											on:change={() => checkCat(category)}
+											bind:group={cat}
+											value={category}
 											type="checkbox"
-											class="checkbox checkbox-primary"
+											class="checkbox-info checkbox"
 										/>
 									</label>
 								{/each}
@@ -207,7 +183,9 @@
 
 	{#if gotdata}
 		{#await promisePlaces}
-			<h3>Loading your places</h3>
+			<!-- <div class="text-center w-full flex flex-col items-center justify-middle mt-20">
+				<h3>Loading your places</h3>
+			</div> -->
 		{:then places}
 			<div in:fly out:fly class="flex w-auto mx-2 flex-row flex-wrap align-middle gap-4 mb-10">
 				{#each places.features as place}
@@ -220,7 +198,7 @@
 							/>
 						</figure>
 						<div class="card-body">
-							<h2 class="card-title">{place.id}</h2>
+							<h2 class="card-title">{place.properties.name}</h2>
 							{#if place.properties.name == ''}
 								<p>Brak opisu</p>
 							{:else}
@@ -229,6 +207,14 @@
 
 							<div class="card-actions justify-end">
 								<button class="btn-xs rounded-lg btn-primary">Zobacz więcej</button>
+								<button class="btn-xs text-center rounded-lg btn-primary"
+									><a
+										class="p-3"
+										target="blank"
+										href="https://www.google.com/maps/search/?api=1&query={place.geometry
+											.coordinates[1]},{place.geometry.coordinates[0]}">Google maps</a
+									>
+								</button>
 							</div>
 						</div>
 					</div>
