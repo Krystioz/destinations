@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { onDestroy } from 'svelte';
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get } from 'firebase/database';
-	import { getAnalytics, logEvent } from 'firebase/analytics';
 	import { fly } from 'svelte/transition';
+	import PlaceCard from '../routes/components/places_card.svelte';
+	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCsEUT-SULj3zJGSNxWGxnPCuOB8EXh4MQ',
@@ -18,8 +17,8 @@
 	};
 
 	const app = initializeApp(firebaseConfig);
-	// const analytics = getAnalytics(app);
 	const db = getDatabase(app);
+
 	let gotdata: boolean = false;
 	let gotCountries: boolean = false;
 	let score: number = 1;
@@ -76,7 +75,6 @@
 		console.log(promisePlaces);
 		return promisePlaces;
 	}
-	
 </script>
 
 <section class="mb-auto flex flex-col justify-between gap-1">
@@ -90,6 +88,22 @@
 	</div>
 	<div class="divider mt-0">Odkrywaj</div>
 	<div class="flex flex-row justify-center align-middle">
+
+		
+		<SearchCollapse
+			getPlacesFunc={getPlaces(lang, lat, cat.join(), score, radius, limit)}
+			{gotCountries}
+			{lang}
+			{lat}
+			{score}
+			{radius}
+			{limit}
+			{Countries}
+			{categories}
+			{cat}
+		/>
+				<!-- start of collapse -->
+				<!-- 
 		<div class="collapse bg-slate-50">
 			<input class="px-0" type="checkbox" />
 			<div
@@ -118,16 +132,16 @@
 						max="20000"
 						class="range range-xs"
 					/>
-				</div>
+				</div> -->
 
-				<button
+				<!-- <button
 					on:click={() => getPlaces(lang, lat, cat.join(), score, radius, limit)}
 					class="btn btn-success mx-2">szukaj</button
 				>
 				<div>
 					<label for="my-modal-3" class="modal-button btn mx-2 w-24">Wybierz państwo</label>
-					<!-- Put this part before </body> tag -->
-					<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+				 Put this part before </body> tag -->
+				<!-- <input type="checkbox" id="my-modal-3" class="modal-toggle" />
 					<div class="modal">
 						<div class="modal-box relative h-80">
 							<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
@@ -151,12 +165,12 @@
 							{/if}
 						</div>
 					</div>
-				</div>
+				</div> -->
 
-				<div>
+				<!-- <div>
 					<label for="my-modal-4" class="modal-button btn mx-2 w-24">Kategorie</label>
-					<!-- Put this part before </body> tag -->
-					<input type="checkbox" id="my-modal-4" class="modal-toggle" />
+				 Put this part before </body> tag -->
+				<!-- <input type="checkbox" id="my-modal-4" class="modal-toggle" />
 					<div class="modal">
 						<div class="modal-box relative h-80 px-24">
 							<label for="my-modal-4" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
@@ -178,7 +192,11 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
+
+				<!-- end of collapse -->
+
+
 	</div>
 
 	{#if gotdata}
@@ -189,35 +207,11 @@
 		{:then places}
 			<div in:fly out:fly class="flex w-auto mx-2 flex-row flex-wrap align-middle gap-4 mb-10">
 				{#each places.features as place}
-					<div class="card-compact card w-96 bg-base-100 shadow-xl">
-						<figure>
-							<img
-								class="object-fill w-96"
-								src="http://placeimg.com/640/480/any"
-								alt="nature images"
-							/>
-						</figure>
-						<div class="card-body">
-							<h2 class="card-title">{place.properties.name}</h2>
-							{#if place.properties.name == ''}
-								<p>Brak opisu</p>
-							{:else}
-								<p>{place.properties.name}</p>
-							{/if}
-
-							<div class="card-actions justify-end">
-								<button class="btn-xs rounded-lg btn-primary">Zobacz więcej</button>
-								<button class="btn-xs text-center rounded-lg btn-primary"
-									><a
-										class="p-3"
-										target="blank"
-										href="https://www.google.com/maps/search/?api=1&query={place.geometry
-											.coordinates[1]},{place.geometry.coordinates[0]}">Google maps</a
-									>
-								</button>
-							</div>
-						</div>
-					</div>
+					<PlaceCard
+						placeName={place.properties.name}
+						placeLat={place.geometry.coordinates[1]}
+						placeLong={place.geometry.coordinates[0]}
+					/>
 				{/each}
 			</div>
 		{:catch Error}

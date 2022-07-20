@@ -1,6 +1,6 @@
 <script>
 	import Hero from './components/hero.svelte';
-	import Feature from './components/feature.svelte';
+
 
 
 
@@ -21,4 +21,3 @@
   </div>
 </div>
 
-<Feature />
