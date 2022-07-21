@@ -10,7 +10,7 @@
 	<title>Welcome</title>
 </svelte:head>
 
-<div class="hero min-h-screen" style="background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Warsaw_insurrection_1794_by_Juliusz_Kossak.PNG/325px-Warsaw_insurrection_1794_by_Juliusz_Kossak.PNG);">
+<div class="hero min-h-screen" style="background-image: url(http://placeimg.com/1000/1000/nature);">
   <div class="hero-overlay bg-opacity-60"></div>
   <div class="hero-content text-center text-neutral-content">
     <div class="max-w-md">

@@ -4,11 +4,12 @@
 	export let score: number;
 	export let radius: number;
 	export let limit: number;
-	export let Countries: JSON;
-	export let categories: any;
 	export let cat: Array<any>;
+
+	export let Countries: JSON;
 	export let gotCountries: boolean;
-	export let getPlacesFunc: any;
+	export let categories: any;
+	export let getPlacesFunc = () => {};
 </script>
 
 <div class="collapse bg-slate-50">
@@ -41,7 +42,7 @@
 			/>
 		</div>
 
-		<button on:click={() => getPlacesFunc} class="btn btn-success mx-2">szukaj</button>
+		<button on:click={getPlacesFunc} class="btn btn-success mx-2">szukaj</button>
 		<div>
 			<label for="my-modal-3" class="modal-button btn mx-2 w-24">Wybierz państwo</label>
 			<!-- Put this part before </body> tag -->
