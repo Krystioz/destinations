@@ -4,6 +4,7 @@
 	import { fly } from 'svelte/transition';
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
+	import Spinner from '../routes/components/loading_spinner.svelte';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCsEUT-SULj3zJGSNxWGxnPCuOB8EXh4MQ',
@@ -24,7 +25,7 @@
 	let lat: number;
 	let lang: number;
 	let limit: number = 1;
-	let radius: number = 1;
+	let radius: number = 1000;
 	let cat: Array<any> = [];
 	const countries = ref(db, '/Countries');
 	let Countries: JSON;
@@ -76,16 +77,18 @@
 	}
 </script>
 
-<section class="mb-auto flex flex-col justify-between items-center gap-1">
+<!-- START OF HTML DOCCUMENT -->
+
+<section class="mb-auto flex flex-col items-center justify-between gap-1">
 	<div
-		class="flex w-full flex-col items-center bg-[url('http://placeimg.com/1000/1000/nature')] text-center"
+		class="flex w-full text-white flex-col items-center bg-[url('http://placeimg.com/1000/1000/nature')] text-center"
 	>
 		<div class="prose my-5">
-			<h2 class="w-full">Welcome to the destination searcher !</h2>
-			<h3 class="w-full">I hope you will have fun</h3>
+			<h2 class="w-full text-white">Welcome to the destination searcher !</h2>
+			<h3 class="w-full text-white">I hope you will have fun</h3>
 		</div>
 	</div>
-	<div class="divider mt-0">Odkrywaj</div>
+	<div class="divider mt-12">Odkrywaj</div>
 	<div class="flex flex-row justify-center align-middle">
 		<SearchCollapse
 			getPlacesFunc={() => getPlaces(lang, lat, cat.join(), score, radius, limit)}
@@ -103,11 +106,12 @@
 
 	{#if gotdata}
 		{#await promisePlaces}
-			<div class="text-center w-full flex flex-col items-center justify-middle mt-20">
-				<h3>Loading your places</h3>
-			</div>
+			<Spinner />
 		{:then places}
-			<div in:fly class="flex w-auto mx-2 flex-row flex-wrap align-middle gap-4 mb-10">
+			<div
+				in:fly
+				class="items-center grid mt-12 mb-5 gap-7 justify-items-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+			>
 				{#each places.features as place}
 					<PlaceCard
 						placeName={place.properties.name}

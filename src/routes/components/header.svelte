@@ -79,7 +79,7 @@
 					tabindex="0"
 					class="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
 				>
-					<li><a href="/">Places</a></li>
+					<li><a href="/places">Places</a></li>
 					<li tabindex="0">
 						<!-- svelte-ignore a11y-missing-attribute -->
 						<a class="justify-between">

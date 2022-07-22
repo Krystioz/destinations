@@ -2,7 +2,7 @@
 	export let lang: number;
 	export let lat: number;
 	export let score: number;
-	export let radius: number;
+	export let radius: number = 1000;
 	export let limit: number;
 	export let cat: Array<any>;
 
@@ -12,15 +12,15 @@
 	export let getPlacesFunc = () => {};
 </script>
 
-<div class="collapse bg-slate-50">
+<div
+	class="collapse rounded-md  transition delay-150 duration-300 ease-in-out hover:shadow-lg mx-1 rounded"
+>
 	<input class="px-0" type="checkbox" />
-	<div
-		class="collapse-title bg-gradient-to-r from-green-400 to-orange-400 bg-clip-text px-0 text-center text-2xl font-extrabold text-transparent"
-	>
+	<div class="collapse-title px-0  text-center text-2xl font-extrabold hover:bg-slate-400">
 		Rozwiń panel szukania
 	</div>
 	<div
-		class="collapse-content flex flex-row flex-wrap items-center justify-between gap-5 lg:gap-24"
+		class="collapse-content flex flex-row flex-wrap items-center justify-between gap-2 lg:gap-8 xl:gap-14"
 	>
 		<div class="flex flex-col items-center">
 			<label for="xs">Popularność: {score}</label>
@@ -28,7 +28,7 @@
 		</div>
 		<div class="flex flex-col items-center">
 			<label for="xs">Wyniki: {limit}</label>
-			<input id="xs" bind:value={limit} type="range" min="1" max="6" class="range range-xs" />
+			<input id="xs" bind:value={limit} type="range" min="1" max="30" class="range range-xs" />
 		</div>
 		<div class="flex flex-col items-center">
 			<label for="xs">Zasięg: {radius}m</label>
@@ -42,9 +42,17 @@
 			/>
 		</div>
 
-		<button on:click={getPlacesFunc} class="btn btn-success mx-2">szukaj</button>
+		<button
+			on:click={getPlacesFunc}
+			class="btn btn-success mx-2 transition delay-150 duration-200  ease-in-out hover:translate-y-1 hover:scale-105"
+			>szukaj</button
+		>
 		<div>
-			<label for="my-modal-3" class="modal-button btn mx-2 w-24">Wybierz państwo</label>
+			<label
+				for="my-modal-3"
+				class="modal-button btn mx-2 w-24  transition delay-150 duration-200 ease-in-out hover:translate-y-1 hover:scale-105"
+				>Wybierz państwo</label
+			>
 			<!-- Put this part before </body> tag -->
 			<input type="checkbox" id="my-modal-3" class="modal-toggle" />
 			<div class="modal">
@@ -73,7 +81,11 @@
 		</div>
 
 		<div>
-			<label for="my-modal-4" class="modal-button btn mx-2 w-24">Kategorie</label>
+			<label
+				for="my-modal-4"
+				class="modal-button btn mx-2 w-24  transition delay-150 duration-200 ease-in-out hover:translate-y-1 hover:scale-105"
+				>Kategorie</label
+			>
 			<!-- Put this part before </body> tag -->
 			<input type="checkbox" id="my-modal-4" class="modal-toggle" />
 			<div class="modal">
@@ -96,5 +108,6 @@
 				</div>
 			</div>
 		</div>
+        <button class="btn mt-2 mx-auto btn-primary">Poprzednie kryteria</button>
 	</div>
 </div>
