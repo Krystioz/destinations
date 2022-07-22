@@ -75,13 +75,14 @@
 		console.log(promisePlaces);
 		return promisePlaces;
 	}
+	console.log(countries);
 </script>
 
 <!-- START OF HTML DOCCUMENT -->
 
 <section class="mb-auto flex flex-col items-center justify-between gap-1">
 	<div
-		class="flex w-full text-white flex-col items-center bg-[url('http://placeimg.com/1000/1000/nature')] text-center"
+		class="flex w-full flex-col items-center bg-[url('http://placeimg.com/1000/1000/nature')] text-center text-white"
 	>
 		<div class="prose my-5">
 			<h2 class="w-full text-white">Welcome to the destination searcher !</h2>
@@ -102,6 +103,24 @@
 			{gotCountries}
 			{categories}
 		/>
+	</div>
+
+	<div class="alert alert-error shadow-lg w-3/4">
+		<div >
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-6 w-6 flex-shrink-0 stroke-current"
+				fill="none"
+				viewBox="0 0 24 24"
+				><path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+				/></svg
+			>
+			<span>Error! Task failed successfully.</span>
+		</div>
 	</div>
 
 	{#if gotdata}
