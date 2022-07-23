@@ -1,31 +1,36 @@
 <svelte:options accessors />
 
 <script lang="ts">
+	import { searchCriteria } from '../stores';
+	import { searchParamsObj } from '../stores';
 	import { loop_guard } from 'svelte/internal';
 	import { fly } from 'svelte/transition';
-	export let lang: number;
-	export let lat: number;
-	export let score: number;
-	export let radius: number = 1000;
-	export let limit: number;
-	export let cat: Array<any>;
-	export let criteria: Array<any>;
-	export let countryChoosen: string;
-
 	export let Countries: JSON;
 	export let gotCountries: boolean;
 	export let categories: any;
 	export let getPlacesFunc = () => {};
-	export let applyCriteria = () => {};
-	export let i: number;
+
 	let CriteriaModal: boolean;
 	function closeCriteria() {
-		console.log(criteria);
 		if (CriteriaModal == true) {
 			CriteriaModal = false;
 		} else {
 			CriteriaModal = true;
 		}
+	}
+
+	function applyCriteria(id) {
+		$searchParamsObj.lang = $searchCriteria[id].lang;
+		$searchParamsObj.lat = $searchCriteria[id].lat;
+		$searchParamsObj.score = $searchCriteria[id].score;
+		$searchParamsObj.limit = $searchCriteria[id].limit;
+		$searchParamsObj.radius = $searchCriteria[id].radius;
+		$searchParamsObj.cat = $searchCriteria[id].categories;
+		$searchParamsObj.choosenCountry = $searchCriteria[id].country;
+		console.log(`search params object: ${$searchParamsObj}`);
+		console.log($searchParamsObj);
+		console.log(`search criteria obj: ${$searchCriteria}`);
+		console.log($searchCriteria);
 	}
 </script>
 
@@ -40,18 +45,32 @@
 		class="collapse-content z-10 flex flex-row flex-wrap items-center justify-between gap-2 lg:gap-8 xl:gap-14"
 	>
 		<div class="flex flex-col items-center">
-			<label for="xs">Popularność: {score}</label>
-			<input id="xs" bind:value={score} type="range" min="1" max="3" class="range range-xs" />
-		</div>
-		<div class="flex flex-col items-center">
-			<label for="xs">Wyniki: {limit}</label>
-			<input id="xs" bind:value={limit} type="range" min="1" max="30" class="range range-xs" />
-		</div>
-		<div class="flex flex-col items-center">
-			<label for="xs">Zasięg: {radius}m</label>
+			<label for="xs">Popularność: {$searchParamsObj.score}</label>
 			<input
 				id="xs"
-				bind:value={radius}
+				bind:value={$searchParamsObj.score}
+				type="range"
+				min="1"
+				max="3"
+				class="range range-xs"
+			/>
+		</div>
+		<div class="flex flex-col items-center">
+			<label for="xs">Wyniki: {$searchParamsObj.limit}</label>
+			<input
+				id="xs"
+				bind:value={$searchParamsObj.limit}
+				type="range"
+				min="1"
+				max="30"
+				class="range range-xs"
+			/>
+		</div>
+		<div class="flex flex-col items-center">
+			<label for="xs">Zasięg: {$searchParamsObj.radius}m</label>
+			<input
+				id="xs"
+				bind:value={$searchParamsObj.radius}
 				type="range"
 				min="1000"
 				max="20000"
@@ -80,10 +99,9 @@
 						{#each Object.values(Countries) as country}
 							<p
 								on:click={() => {
-									lat = country.latlng[0];
-									lang = country.latlng[1];
-									countryChoosen = country.translations.pol.common;
-									console.log(lat, lang);
+									$searchParamsObj.lat = country.latlng[0];
+									$searchParamsObj.lang = country.latlng[1];
+									$searchParamsObj.choosenCountry = country.translations.pol.common;
 								}}
 								href=""
 								class="link m-2 text-xs"
@@ -115,7 +133,7 @@
 							<label class="label cursor-pointer">
 								<span class="label-text">{category}</span>
 								<input
-									bind:group={cat}
+									bind:group={$searchParamsObj.cat}
 									value={category}
 									type="checkbox"
 									class="checkbox-info checkbox"
@@ -147,22 +165,19 @@
 				<label for="my-modal-5" class="btn btn-circle  btn-sm absolute right-2 top-2">✕</label>
 				<h3 class="text-center text-lg font-bold">Previous search criteria</h3>
 				<div class="mt-2 grid grid-cols-2 gap-3">
-					<!-- content here -->
-					{#key i}
-						{#each criteria as item (item.id)}
-							<div
-								on:click={closeCriteria}
-								class="delay-50 m-4 cursor-pointer rounded-lg shadow-md transition  duration-200 ease-in-out hover:translate-y-1 hover:scale-125 hover:border-2 hover:shadow-2xl"
-							>
-								<div on:click={() => applyCriteria(item.id)}>
-									<p class="m-2">Country: {item.country}</p>
-									<p class="m-2">radius: {item.radius}</p>
-									<p class="m-2">score: {item.score}</p>
-									<p class="m-2">categories: {item.categories}</p>
-								</div>
+					{#each $searchCriteria as item, id}
+						<div
+							on:click={closeCriteria}
+							class="delay-50 hover:scale-115 m-4 cursor-pointer rounded-lg shadow-md  transition duration-200 ease-in-out hover:translate-y-1  hover:bg-slate-100 hover:shadow-2xl"
+						>
+							<div on:click={() => applyCriteria(item.id)}>
+								<p class="m-2">Country: {item.country}</p>
+								<p class="m-2">radius: {item.radius}</p>
+								<p class="m-2">score: {item.score}</p>
+								<p class="m-2">categories: {item.categories}</p>
 							</div>
-						{/each}
-					{/key}
+						</div>
+					{/each}
 				</div>
 			</div>
 		</div>

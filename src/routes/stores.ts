@@ -1,6 +1,29 @@
-import { readable, derived } from 'svelte/store';
+import { readable, derived, writable } from 'svelte/store';
 
-export const time: any = readable(new Date(), function start(set) {
+export const searchParamsObj = writable({
+	lat: 0,
+	lang: 0,
+	score: 1,
+	limit: 3,
+	radius: 1000,
+	cat: [],
+	choosenCountry: ''
+});
+
+export const searchCriteria = writable([
+	{
+		id: 0,
+		lat: -21.23333333,
+		lang: -159.76666666,
+		score: 1,
+		categories: ['natural'],
+		country: 'Wyspy Cooka',
+		radius: 9055,
+		limit: 3
+	}
+]);
+
+export const time = readable(new Date(), function start(set) {
 	const interval = setInterval(() => {
 		set(new Date());
 	}, 1000);
@@ -10,6 +33,6 @@ export const time: any = readable(new Date(), function start(set) {
 	};
 });
 
-const start = new Date();
+const start: any = new Date();
 
-export const elapsed = derived(time, ($time) => Math.round(($time - start) / 1000));
+export const elapsed = derived(time, ($time: any) => Math.round(($time - start) / 1000));

@@ -17,7 +17,11 @@
 		{#if placeName == ''}
 			<p>Brak opisu</p>
 		{:else}
-			<p>{placeName}</p>
+			<p>
+				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquid, facilis! Non fuga
+				mollitia labore quaerat sequi porro dicta iste at illo consequatur atque iure tempore, sed
+				optio, alias nulla velit.
+			</p>
 		{/if}
 
 		<div class="card-actions justify-end">

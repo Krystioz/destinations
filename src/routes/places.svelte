@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { searchCriteria } from './stores';
+	import { searchParamsObj } from './stores';
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
@@ -21,12 +23,7 @@
 	const db = getDatabase(app);
 	let gotdata: boolean = false;
 	let gotCountries: boolean = false;
-	let score: number = 1;
-	let lat: number;
-	let lang: number;
-	let limit: number = 1;
-	let radius: number = 1000;
-	let cat: Array<any> = [];
+
 	const countries = ref(db, '/Countries');
 	let Countries: JSON;
 	let promisePlaces: Promise<any>;
@@ -41,18 +38,7 @@
 	let showErr = false;
 	let countryChoosen: string;
 	let errMessage: string = '';
-	let criteria: Array<any> = [
-		{
-			id: 0,
-			lat: -21.23333333,
-			lang: -159.76666666,
-			score: 1,
-			categories: ['natural'],
-			country: 'Wyspy Cooka',
-			radius: 9055,
-			limit: 3
-		}
-	];
+
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
 		gotCountries = true;
@@ -60,31 +46,25 @@
 	let i: number = 0;
 
 	// historical%2Cnature%2Cmonuments%2Czoos
-	const fetchPlaces = async (
-		longitude: number,
-		latitude: number,
-		cat: string,
-		rate: number,
-		radius: number,
-		limit: number
-	) => {
+	const fetchPlaces = async () => {
 		var response = await fetch(
-			`https://api.opentripmap.com/0.1/en/places/radius?radius=${radius}&lon=${longitude}&lat=${latitude}&limit=${limit}&rate=${rate}&kinds=${cat}&apikey=5ae2e3f221c38a28845f05b606b3b76d805d8dd89180dcbbbbcbdbf8`
+			`https://api.opentripmap.com/0.1/en/places/radius?radius=${$searchParamsObj.radius}&lon=${
+				$searchParamsObj.lang
+			}&lat=${$searchParamsObj.lat}&limit=${$searchParamsObj.limit}&rate=${
+				$searchParamsObj.score
+			}&kinds=${$searchParamsObj.cat.join()}&apikey=5ae2e3f221c38a28845f05b606b3b76d805d8dd89180dcbbbbcbdbf8`
 		);
 
 		var result = await response.json();
 		return result;
 	};
 
-	function getPlaces(
-		longitude: number,
-		latitude: number,
-		cat: string,
-		rate: number,
-		radius: number,
-		limit: number
-	) {
-		if (lat == undefined || lang == undefined || cat == '') {
+	function getPlaces() {
+		if (
+			$searchParamsObj.lat == undefined ||
+			$searchParamsObj.choosenCountry == '' ||
+			$searchParamsObj.cat == ['']
+		) {
 			showErr = true;
 			errMessage = 'Please select all search criteria !';
 			setTimeout(() => {
@@ -93,38 +73,33 @@
 			return;
 		}
 		pushCriteria();
-		promisePlaces = fetchPlaces(longitude, latitude, cat, rate, radius, limit);
+		promisePlaces = fetchPlaces();
+		console.log(promisePlaces);
 		gotdata = true;
 		return promisePlaces;
 	}
-	function applyCriteria(a: number) {
-		let arr = criteria[a];
-		console.log(a);
-		score = arr.score;
-		lat = arr.lat;
-		lang = arr.lang;
-		limit = arr.limit;
-		radius = arr.radius;
-		cat = arr.categories;
-		countryChoosen = arr.country;
-		console.log(lat, lang, limit, radius, score, cat);
-	}
+
 	function pushCriteria() {
-		if (criteria.length >= 4) {
-			criteria.shift();
+		console.log($searchCriteria);
+		let criteriaObj = $searchCriteria;
+
+		if (criteriaObj.length >= 4) {
+			criteriaObj.shift();
+			$searchCriteria = criteriaObj;
 		}
-		criteria.push({
+
+		criteriaObj.push({
 			id: i + 1,
-			lat: lat,
-			lang: lang,
-			score: score,
-			categories: cat,
-			country: countryChoosen,
-			radius: radius,
-			limit: limit
+			lat: $searchParamsObj.lat,
+			lang: $searchParamsObj.lang,
+			score: $searchParamsObj.score,
+			categories: $searchParamsObj.cat,
+			country: $searchParamsObj.choosenCountry,
+			radius: $searchParamsObj.radius,
+			limit: $searchParamsObj.limit
 		});
+		$searchCriteria = criteriaObj;
 		i += 1;
-		console.log(criteria);
 	}
 </script>
 
@@ -141,22 +116,7 @@
 	</div>
 	<div class="divider mt-12">Odkrywaj</div>
 	<div class="z-10 flex flex-row justify-center align-middle">
-		<SearchCollapse
-			getPlacesFunc={() => getPlaces(lang, lat, cat.join(), score, radius, limit)}
-			{applyCriteria}
-			bind:lang
-			bind:lat
-			bind:score
-			bind:radius
-			bind:limit
-			bind:cat
-			bind:criteria
-			bind:i
-			bind:countryChoosen
-			{Countries}
-			{gotCountries}
-			{categories}
-		/>
+		<SearchCollapse getPlacesFunc={() => getPlaces()} {Countries} {gotCountries} {categories} />
 	</div>
 	{#if showErr}
 		<div
@@ -204,3 +164,4 @@
 		{/await}
 	{/if}
 </section>
+<button on:click={() => console.log($searchParamsObj)} class="btn btn-primary">asdasd</button>
