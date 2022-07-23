@@ -6,7 +6,7 @@
 
 <div class="card-compact card w-96 bg-base-100 shadow-xl">
 	<figure>
-		<img class="w-96 object-cover" src="http://placeimg.com/640/480/any" alt="nature images" />
+		<img class="w-96 object-cover" src="http://placeimg.com/640/480/nature" alt="nature images" />
 	</figure>
 	<div class="card-body">
 		<h2 class="card-title">

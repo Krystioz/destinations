@@ -1,3 +1,5 @@
+<svelte:options accessors />
+
 <script lang="ts">
 	import { loop_guard } from 'svelte/internal';
 	import { fly } from 'svelte/transition';
@@ -7,25 +9,35 @@
 	export let radius: number = 1000;
 	export let limit: number;
 	export let cat: Array<any>;
-	export let criteria: Array<any> = [{ name: 12 }, { name: 12 }, { name: 12 }, { name: 12 }];
+	export let criteria: Array<any>;
+	export let countryChoosen: string;
 
 	export let Countries: JSON;
 	export let gotCountries: boolean;
 	export let categories: any;
 	export let getPlacesFunc = () => {};
-	let CriteriaModal;
+	export let applyCriteria = () => {};
+	export let i: number;
+	let CriteriaModal: boolean;
 	function closeCriteria() {
-		CriteriaModal = false;
+		console.log(criteria);
+		if (CriteriaModal == true) {
+			CriteriaModal = false;
+		} else {
+			CriteriaModal = true;
+		}
 	}
 </script>
 
-<div class="collapse mx-1 rounded transition delay-150 duration-300 ease-in-out hover:shadow-lg">
+<div
+	class="collapse z-10 mx-1 rounded transition delay-150 duration-300 ease-in-out hover:shadow-lg"
+>
 	<input class="px-0" type="checkbox" />
 	<div class="collapse-title px-0  text-center text-2xl font-extrabold hover:bg-slate-400">
 		Rozwiń panel szukania
 	</div>
 	<div
-		class="collapse-content flex flex-row flex-wrap items-center justify-between gap-2 lg:gap-8 xl:gap-14"
+		class="collapse-content z-10 flex flex-row flex-wrap items-center justify-between gap-2 lg:gap-8 xl:gap-14"
 	>
 		<div class="flex flex-col items-center">
 			<label for="xs">Popularność: {score}</label>
@@ -70,12 +82,13 @@
 								on:click={() => {
 									lat = country.latlng[0];
 									lang = country.latlng[1];
+									countryChoosen = country.translations.pol.common;
 									console.log(lat, lang);
 								}}
 								href=""
 								class="link m-2 text-xs"
 							>
-								{country.translations.pol.official}
+								{country.translations.pol.common}
 							</p>
 						{/each}
 					{:else}
@@ -115,11 +128,15 @@
 		</div>
 
 		<!-- SEARCH CRITERIA BUTTON -->
-		<label for="my-modal-5" class="modal-button btn mx-auto">Search criteria</label>
+		<label
+			for="my-modal-5"
+			class="modal-button btn mx-auto transition  delay-150 duration-200 ease-in-out hover:translate-y-1 hover:scale-105"
+			>Search criteria</label
+		>
 
 		<!-- Put this part before </body> tag -->
 		<input
-			on:click={(CriteriaModal = true)}
+			on:click={closeCriteria}
 			checked={CriteriaModal}
 			type="checkbox"
 			id="my-modal-5"
@@ -127,21 +144,25 @@
 		/>
 		<div class="modal">
 			<div class="modal-box relative">
-				<label for="my-modal-5" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
+				<label for="my-modal-5" class="btn btn-circle  btn-sm absolute right-2 top-2">✕</label>
 				<h3 class="text-center text-lg font-bold">Previous search criteria</h3>
 				<div class="mt-2 grid grid-cols-2 gap-3">
-					{#each criteria as item}
-						<div
-							on:click={closeCriteria}
-							class="delay-50 m-4 cursor-pointer rounded-lg shadow-sm transition  duration-200 ease-in-out hover:translate-y-1 hover:scale-125 hover:shadow-2xl"
-						>
-							<p class="m-2">qw</p>
-							<p class="m-2">qwe</p>
-							<p class="m-2">qwe</p>
-							<p class="m-2">asdasd</p>
-							<p class="m-2">qweqwe</p>
-						</div>
-					{/each}
+					<!-- content here -->
+					{#key i}
+						{#each criteria as item (item.id)}
+							<div
+								on:click={closeCriteria}
+								class="delay-50 m-4 cursor-pointer rounded-lg shadow-md transition  duration-200 ease-in-out hover:translate-y-1 hover:scale-125 hover:border-2 hover:shadow-2xl"
+							>
+								<div on:click={() => applyCriteria(item.id)}>
+									<p class="m-2">Country: {item.country}</p>
+									<p class="m-2">radius: {item.radius}</p>
+									<p class="m-2">score: {item.score}</p>
+									<p class="m-2">categories: {item.categories}</p>
+								</div>
+							</div>
+						{/each}
+					{/key}
 				</div>
 			</div>
 		</div>

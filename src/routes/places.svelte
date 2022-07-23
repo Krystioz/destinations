@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { initializeApp } from 'firebase/app';
-	import { getDatabase, ref, onValue, get } from 'firebase/database';
-	import { fly } from 'svelte/transition';
+	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
+	import { fly, fade } from 'svelte/transition';
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
 	import Spinner from '../routes/components/loading_spinner.svelte';
@@ -38,11 +38,26 @@
 		'sport',
 		'architecture'
 	];
-
+	let showErr = false;
+	let countryChoosen: string;
+	let errMessage: string = '';
+	let criteria: Array<any> = [
+		{
+			id: 0,
+			lat: -21.23333333,
+			lang: -159.76666666,
+			score: 1,
+			categories: ['natural'],
+			country: 'Wyspy Cooka',
+			radius: 9055,
+			limit: 3
+		}
+	];
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
 		gotCountries = true;
 	});
+	let i: number = 0;
 
 	// historical%2Cnature%2Cmonuments%2Czoos
 	const fetchPlaces = async (
@@ -69,13 +84,48 @@
 		radius: number,
 		limit: number
 	) {
-		console.log(longitude, latitude, cat, rate, radius, limit);
+		if (lat == undefined || lang == undefined || cat == '') {
+			showErr = true;
+			errMessage = 'Please select all search criteria !';
+			setTimeout(() => {
+				showErr = false;
+			}, 3000);
+			return;
+		}
+		pushCriteria();
 		promisePlaces = fetchPlaces(longitude, latitude, cat, rate, radius, limit);
 		gotdata = true;
-		console.log(promisePlaces);
 		return promisePlaces;
 	}
-	console.log(countries);
+	function applyCriteria(a: number) {
+		let arr = criteria[a];
+		console.log(a);
+		score = arr.score;
+		lat = arr.lat;
+		lang = arr.lang;
+		limit = arr.limit;
+		radius = arr.radius;
+		cat = arr.categories;
+		countryChoosen = arr.country;
+		console.log(lat, lang, limit, radius, score, cat);
+	}
+	function pushCriteria() {
+		if (criteria.length >= 4) {
+			criteria.shift();
+		}
+		criteria.push({
+			id: i + 1,
+			lat: lat,
+			lang: lang,
+			score: score,
+			categories: cat,
+			country: countryChoosen,
+			radius: radius,
+			limit: limit
+		});
+		i += 1;
+		console.log(criteria);
+	}
 </script>
 
 <!-- START OF HTML DOCCUMENT -->
@@ -90,46 +140,56 @@
 		</div>
 	</div>
 	<div class="divider mt-12">Odkrywaj</div>
-	<div class="flex flex-row justify-center align-middle">
+	<div class="z-10 flex flex-row justify-center align-middle">
 		<SearchCollapse
 			getPlacesFunc={() => getPlaces(lang, lat, cat.join(), score, radius, limit)}
+			{applyCriteria}
 			bind:lang
 			bind:lat
 			bind:score
 			bind:radius
 			bind:limit
 			bind:cat
+			bind:criteria
+			bind:i
+			bind:countryChoosen
 			{Countries}
 			{gotCountries}
 			{categories}
 		/>
 	</div>
+	{#if showErr}
+		<div
+			out:fade
+			in:fly={{ y: 200, duration: 1500 }}
+			class="alert alert-error z-0 mt-2 w-3/4 shadow-lg"
+		>
+			<div>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6 flex-shrink-0 stroke-current"
+					fill="none"
+					viewBox="0 0 24 24"
+					><path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+					/></svg
+				>
 
-	<div class="alert alert-error shadow-lg w-3/4">
-		<div >
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-6 w-6 flex-shrink-0 stroke-current"
-				fill="none"
-				viewBox="0 0 24 24"
-				><path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-				/></svg
-			>
-			<span>Error! Task failed successfully.</span>
+				<span>{errMessage}</span>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	{#if gotdata}
 		{#await promisePlaces}
 			<Spinner />
 		{:then places}
 			<div
-				in:fly
-				class="items-center grid mt-12 mb-5 gap-7 justify-items-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+				in:fly={{ x: -200, duration: 1500 }}
+				class="items-center grid mt-12 mx-2 mb-5 gap-4 justify-items-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
 			>
 				{#each places.features as place}
 					<PlaceCard
