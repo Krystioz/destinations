@@ -199,6 +199,9 @@
 						</div>
 						<!-- Cities -->
 					{:else}
+						<div class="absolute top-2 left-3">
+							<button on:click={citiesCntr} class="btn btn-secondary btn-xs">powrót</button>
+						</div>
 						<h3 out:fade in:fade class="mb-3 text-center text-lg font-bold">Wybierz miasto</h3>
 						<div out:fade in:fade class="flex flex-col items-center">
 							<input
