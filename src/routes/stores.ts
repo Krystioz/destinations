@@ -1,13 +1,33 @@
 import { readable, derived, writable } from 'svelte/store';
 
+export const countryInput = writable('');
+export const citiesInput = writable('');
+export const countriesArr = writable([]);
+export const citiesArr = writable([]);
+export const selectedCountryCode = writable('');
+
 export const searchParamsObj = writable({
 	lat: 0,
 	lang: 0,
 	score: 1,
 	limit: 3,
 	radius: 1000,
-	cat: [],
-	choosenCountry: ''
+	cat: [''],
+	choosenCountry: '',
+	choosenCity: '',
+	choosenCountryCode: ''
+});
+
+export const searchParamsObjDef = writable({
+	lat: 0,
+	lang: 0,
+	score: 1,
+	limit: 3,
+	radius: 1000,
+	cat: [''],
+	choosenCountry: '',
+	choosenCity: '',
+	choosenCountryCode: ''
 });
 
 export const searchCriteria = writable([

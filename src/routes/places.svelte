@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { searchCriteria } from './stores';
-	import { searchParamsObj } from './stores';
+	import { searchParamsObj, countriesArr, searchCriteria, citiesArr } from './stores';
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
+
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
 	import Spinner from '../routes/components/loading_spinner.svelte';
@@ -23,9 +23,12 @@
 	const db = getDatabase(app);
 	let gotdata: boolean = false;
 	let gotCountries: boolean = false;
+	let gotCities: boolean = false;
 
 	const countries = ref(db, '/Countries');
-	let Countries: JSON;
+	const cities = ref(db, '/Cities');
+	let Cities: any;
+	let Countries: any;
 	let promisePlaces: Promise<any>;
 	let categories: Array<any> = [
 		'natural',
@@ -38,14 +41,47 @@
 	let showErr = false;
 	let countryChoosen: string;
 	let errMessage: string = '';
+	let i: number = 0;
 
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
 		gotCountries = true;
-	});
-	let i: number = 0;
 
-	// historical%2Cnature%2Cmonuments%2Czoos
+		$countriesArr = Countries.map((el: any) => ({
+			name: el.translations.pol.common,
+			population: el.population,
+			map_link: el.maps,
+			lat: el.latlng[0],
+			lang: el.latlng[1],
+			capital: el.capital,
+			code: el.altSpellings[0],
+			id: i++
+			// capital_latlng: [el.capitalInfo.latlng[0], el.capitalInfo.latlng[0]]
+		}));
+		console.log(
+			'🚀 ~ file: places.svelte ~ line 61 ~ $countriesArr=Countries.map ~ 	$countriesArr',
+			$countriesArr
+		);
+	});
+
+	get(cities).then((snapshot) => {
+		Cities = snapshot.val();
+		gotCities = true;
+		$citiesArr = Cities;
+
+		// $citiesArr = Cities.map((el: any) => ({
+		// 	name: el.translations.pol.common,
+		// 	population: el.population,
+		// 	map_link: el.maps,
+		// 	lat: el.latlng[0],
+		// 	lang: el.latlng[1],
+		// 	capital: el.capital,
+		// 	code: el.altSpellings[0],
+		// 	id: i++
+		// 	// capital_latlng: [el.capitalInfo.latlng[0], el.capitalInfo.latlng[0]]
+		// }));
+	});
+
 	const fetchPlaces = async () => {
 		var response = await fetch(
 			`https://api.opentripmap.com/0.1/en/places/radius?radius=${$searchParamsObj.radius}&lon=${
@@ -74,13 +110,11 @@
 		}
 		pushCriteria();
 		promisePlaces = fetchPlaces();
-		console.log(promisePlaces);
 		gotdata = true;
 		return promisePlaces;
 	}
 
 	function pushCriteria() {
-		console.log($searchCriteria);
 		let criteriaObj = $searchCriteria;
 
 		if (criteriaObj.length >= 4) {
@@ -116,7 +150,7 @@
 	</div>
 	<div class="divider mt-12">Odkrywaj</div>
 	<div class="z-10 flex flex-row justify-center align-middle">
-		<SearchCollapse getPlacesFunc={() => getPlaces()} {Countries} {gotCountries} {categories} />
+		<SearchCollapse getPlacesFunc={() => getPlaces()} {gotCountries} {gotCities} {categories} />
 	</div>
 	{#if showErr}
 		<div
@@ -164,4 +198,3 @@
 		{/await}
 	{/if}
 </section>
-<button on:click={() => console.log($searchParamsObj)} class="btn btn-primary">asdasd</button>

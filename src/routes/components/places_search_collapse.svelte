@@ -1,14 +1,32 @@
 <svelte:options accessors />
 
 <script lang="ts">
-	import { searchCriteria } from '../stores';
-	import { searchParamsObj } from '../stores';
-	import { loop_guard } from 'svelte/internal';
-	import { fly } from 'svelte/transition';
-	export let Countries: JSON;
+	import {
+		searchCriteria,
+		searchParamsObj,
+		searchParamsObjDef,
+		countriesArr,
+		citiesArr,
+		citiesInput
+	} from '../stores';
+
+	import { countryInput } from '../stores';
+	import { fly, crossfade, fade } from 'svelte/transition';
+	import { flip } from 'svelte/animate';
+	import { quintOut } from 'svelte/easing';
+
+	// export let Countries: JSON;
 	export let gotCountries: boolean;
+	export let gotCities: boolean;
 	export let categories: any;
 	export let getPlacesFunc = () => {};
+	// arr countries
+	let newArr: Array<any>;
+	//arr cities
+	let newArrCities: Array<any> = $citiesArr;
+	let countryCities: Array<any>;
+	//false = country true = city
+	let cntrCity: boolean = false;
 
 	let CriteriaModal: boolean;
 	function closeCriteria() {
@@ -19,7 +37,7 @@
 		}
 	}
 
-	function applyCriteria(id) {
+	function applyCriteria(id: any) {
 		$searchParamsObj.lang = $searchCriteria[id].lang;
 		$searchParamsObj.lat = $searchCriteria[id].lat;
 		$searchParamsObj.score = $searchCriteria[id].score;
@@ -27,10 +45,56 @@
 		$searchParamsObj.radius = $searchCriteria[id].radius;
 		$searchParamsObj.cat = $searchCriteria[id].categories;
 		$searchParamsObj.choosenCountry = $searchCriteria[id].country;
-		console.log(`search params object: ${$searchParamsObj}`);
-		console.log($searchParamsObj);
-		console.log(`search criteria obj: ${$searchCriteria}`);
-		console.log($searchCriteria);
+	}
+
+	function resetCriteria() {
+		$searchParamsObj = $searchParamsObjDef;
+	}
+
+	$: {
+		newArrCities = countryCities.filter(
+			(e) => e.name.toLowerCase().indexOf($citiesInput.toLowerCase()) + 1
+		);
+	}
+
+	$: {
+		newArrCities = $citiesArr.filter((e) =>
+			e.country.includes($searchParamsObj.choosenCountryCode)
+		);
+		countryCities = newArrCities;
+	}
+
+	$: {
+		newArr = $countriesArr;
+		newArr = $countriesArr.filter(
+			(e) => e.name.toLowerCase().indexOf($countryInput.toLowerCase()) + 1
+		);
+	}
+
+	const [send, receive] = crossfade({
+		duration: (d) => Math.sqrt(d * 200),
+
+		fallback(node, params) {
+			const style = getComputedStyle(node);
+			const transform = style.transform === 'none' ? '' : style.transform;
+
+			return {
+				duration: 600,
+				easing: quintOut,
+				css: (t) => `
+					transform: ${transform} scale(${t});
+					opacity: ${t}
+				`
+			};
+		}
+	});
+
+	function citiesCntr() {
+		if (cntrCity == false) {
+			cntrCity = true;
+		} else {
+			cntrCity = false;
+		}
 	}
 </script>
 
@@ -42,7 +106,7 @@
 		Rozwiń panel szukania
 	</div>
 	<div
-		class="collapse-content z-10 flex flex-row flex-wrap items-center justify-between gap-2 lg:gap-8 xl:gap-14"
+		class="collapse-content z-10 grid grid-cols-3 items-center justify-center justify-items-center gap-2 lg:gap-8 xl:gap-14"
 	>
 		<div class="flex flex-col items-center">
 			<label for="xs">Popularność: {$searchParamsObj.score}</label>
@@ -67,7 +131,7 @@
 			/>
 		</div>
 		<div class="flex flex-col items-center">
-			<label for="xs">Zasięg: {$searchParamsObj.radius}m</label>
+			<label for="xs">Zasięg: {Math.round($searchParamsObj.radius / 1000)} km</label>
 			<input
 				id="xs"
 				bind:value={$searchParamsObj.radius}
@@ -89,29 +153,83 @@
 				class="modal-button btn mx-2 w-24  transition delay-150 duration-200 ease-in-out hover:translate-y-1 hover:scale-105"
 				>Wybierz państwo</label
 			>
+
 			<!-- Put this part before </body> tag -->
 			<input type="checkbox" id="my-modal-3" class="modal-toggle" />
 			<div class="modal">
-				<div class="modal-box relative h-80">
-					<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
-					<h3 class="text-lg font-bold">Wybierz państwo</h3>
-					{#if gotCountries}
-						{#each Object.values(Countries) as country}
-							<p
-								on:click={() => {
-									$searchParamsObj.lat = country.latlng[0];
-									$searchParamsObj.lang = country.latlng[1];
-									$searchParamsObj.choosenCountry = country.translations.pol.common;
-								}}
-								href=""
-								class="link m-2 text-xs"
-							>
-								{country.translations.pol.common}
-							</p>
-						{/each}
+				<div class="modal-box relative  h-80 overflow-hidden">
+					<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-3 top-3">✕</label>
+
+					<!-- Countries -->
+					{#if !cntrCity}
+						<h3 out:fade in:fade class="mb-3 text-center text-lg font-bold">Wybierz państwo</h3>
+						<!-- content here -->
+
+						<!-- start of countries content -->
+						<div out:fade in:fade class="flex flex-col items-center">
+							<input
+								bind:value={$countryInput}
+								type="text"
+								placeholder="Szukaj państwa"
+								class="input input-bordered input-sm mb-4 w-full max-w-xs"
+							/>
+							<div class="grid grid-cols-3 items-center text-center align-middle">
+								{#if gotCountries}
+									{#each newArr as country (country.id)}
+										<p
+											in:receive={{ key: country.id }}
+											out:send={{ key: country.id }}
+											on:click={() => {
+												$searchParamsObj.lat = country.lat;
+												$searchParamsObj.lang = country.lang;
+												$searchParamsObj.choosenCountry = country.name;
+												$searchParamsObj.choosenCountryCode = country.code;
+												citiesCntr();
+											}}
+											href=""
+											class="m-2 cursor-pointer text-xs"
+										>
+											{country.name}
+										</p>
+									{/each}
+								{:else}
+									<p>Loading your data</p>
+								{/if}
+							</div>
+						</div>
+						<!-- Cities -->
 					{:else}
-						<p>Loading your data</p>
+						<h3 out:fade in:fade class="mb-3 text-center text-lg font-bold">Wybierz miasto</h3>
+						<div out:fade in:fade class="flex flex-col items-center">
+							<input
+								bind:value={$citiesInput}
+								type="text"
+								placeholder="Szukaj miasta"
+								class="input input-bordered input-sm mb-4 w-full max-w-xs"
+							/>
+							<div class="grid grid-cols-3 items-center text-center align-middle">
+								{#if gotCities}
+									{#each newArrCities as city}
+										<p
+											on:click={() => {
+												$searchParamsObj.lat = city.lat;
+												$searchParamsObj.lang = city.lng;
+												$searchParamsObj.choosenCity = city.name;
+											}}
+											href=""
+											class="m-2 cursor-pointer text-xs"
+										>
+											{city.name}
+										</p>
+									{/each}
+								{:else}
+									<p>Loading your data</p>
+								{/if}
+							</div>
+						</div>
 					{/if}
+					<!-- end of cities -->
+					<!-- end of countries content -->
 				</div>
 			</div>
 		</div>
@@ -152,7 +270,6 @@
 			>Search criteria</label
 		>
 
-		<!-- Put this part before </body> tag -->
 		<input
 			on:click={closeCriteria}
 			checked={CriteriaModal}
@@ -181,5 +298,6 @@
 				</div>
 			</div>
 		</div>
+		<button on:click={() => resetCriteria()} class="btn btn-outline btn-warning">Reset</button>
 	</div>
 </div>
