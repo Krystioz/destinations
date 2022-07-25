@@ -1,7 +1,9 @@
 <script lang="ts">
+
 	export let placeName: String;
 	export let placeLat: Number;
 	export let placeLong: Number;
+	export let placeCat: Array<any>;
 </script>
 
 <div class="card-compact card w-96 bg-base-100 shadow-xl">
@@ -11,7 +13,13 @@
 	<div class="card-body">
 		<h2 class="card-title">
 			{placeName}
-			<div class="badge badge-secondary inline">NEW</div>
+			<div class="grid grid-cols-1">
+				{#each placeCat as cat}
+					<div class="badge badge-secondary inline text-xs">{cat}</div>
+
+					<!-- content here -->
+				{/each}
+			</div>
 		</h2>
 
 		{#if placeName == ''}

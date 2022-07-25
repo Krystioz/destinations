@@ -58,28 +58,12 @@
 			id: i++
 			// capital_latlng: [el.capitalInfo.latlng[0], el.capitalInfo.latlng[0]]
 		}));
-		console.log(
-			'🚀 ~ file: places.svelte ~ line 61 ~ $countriesArr=Countries.map ~ 	$countriesArr',
-			$countriesArr
-		);
 	});
 
 	get(cities).then((snapshot) => {
 		Cities = snapshot.val();
 		gotCities = true;
 		$citiesArr = Cities;
-
-		// $citiesArr = Cities.map((el: any) => ({
-		// 	name: el.translations.pol.common,
-		// 	population: el.population,
-		// 	map_link: el.maps,
-		// 	lat: el.latlng[0],
-		// 	lang: el.latlng[1],
-		// 	capital: el.capital,
-		// 	code: el.altSpellings[0],
-		// 	id: i++
-		// 	// capital_latlng: [el.capitalInfo.latlng[0], el.capitalInfo.latlng[0]]
-		// }));
 	});
 
 	const fetchPlaces = async () => {
@@ -96,6 +80,10 @@
 	};
 
 	function getPlaces() {
+		console.log(
+			'🚀 ~ file: places.svelte ~ line 100 ~ getPlaces ~ $searchParamsObj.cat',
+			$searchParamsObj.cat
+		);
 		if (
 			$searchParamsObj.lat == undefined ||
 			$searchParamsObj.choosenCountry == '' ||
@@ -103,6 +91,13 @@
 		) {
 			showErr = true;
 			errMessage = 'Please select all search criteria !';
+			setTimeout(() => {
+				showErr = false;
+			}, 3000);
+			return;
+		} else if ($searchParamsObj.choosenCountry != '' && $searchParamsObj.choosenCity == '') {
+			showErr = true;
+			errMessage = 'Please select the city !';
 			setTimeout(() => {
 				showErr = false;
 			}, 3000);
@@ -190,6 +185,7 @@
 						placeName={place.properties.name}
 						placeLat={place.geometry.coordinates[1]}
 						placeLong={place.geometry.coordinates[0]}
+						placeCat={place.properties.kinds.split(',')}
 					/>
 				{/each}
 			</div>

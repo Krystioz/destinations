@@ -9,7 +9,6 @@
 		citiesArr,
 		citiesInput
 	} from '../stores';
-
 	import { countryInput } from '../stores';
 	import { fly, crossfade, fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
@@ -34,6 +33,15 @@
 			CriteriaModal = false;
 		} else {
 			CriteriaModal = true;
+		}
+	}
+
+	let CountriesModal: boolean;
+	function closeCounries() {
+		if (CountriesModal == true) {
+			CountriesModal = false;
+		} else {
+			CountriesModal = true;
 		}
 	}
 
@@ -155,7 +163,13 @@
 			>
 
 			<!-- Put this part before </body> tag -->
-			<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+			<input
+				on:click={closeCounries}
+				checked={CountriesModal}
+				type="checkbox"
+				id="my-modal-3"
+				class="modal-toggle"
+			/>
 			<div class="modal">
 				<div class="modal-box relative  h-80 overflow-hidden">
 					<label for="my-modal-3" class="btn btn-circle btn-sm absolute right-3 top-3">✕</label>
@@ -175,10 +189,11 @@
 							/>
 							<div class="grid grid-cols-3 items-center text-center align-middle">
 								{#if gotCountries}
-									{#each newArr as country (country.id)}
+									{#each newArr.slice(0, 40) as country (country.id)}
 										<p
 											in:receive={{ key: country.id }}
 											out:send={{ key: country.id }}
+											animate:flip={{ duration: 450 }}
 											on:click={() => {
 												$searchParamsObj.lat = country.lat;
 												$searchParamsObj.lang = country.lang;
@@ -210,14 +225,18 @@
 								placeholder="Szukaj miasta"
 								class="input input-bordered input-sm mb-4 w-full max-w-xs"
 							/>
-							<div class="grid grid-cols-3 items-center text-center align-middle">
+							<div class="grid grid-cols-5 items-center text-center align-middle">
 								{#if gotCities}
-									{#each newArrCities as city}
+									{#each newArrCities.slice(0, 30) as city (city)}
 										<p
+											in:receive={{ key: city.id }}
+											out:send={{ key: city.id }}
+											animate:flip={{ duration: 450 }}
 											on:click={() => {
 												$searchParamsObj.lat = city.lat;
 												$searchParamsObj.lang = city.lng;
 												$searchParamsObj.choosenCity = city.name;
+												closeCounries();
 											}}
 											href=""
 											class="m-2 cursor-pointer text-xs"
