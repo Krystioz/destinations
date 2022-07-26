@@ -41,6 +41,7 @@
 		"cities.json": "^1.1.10",
 		"daisyui": "^2.19.0",
 		"firebase": "^9.9.0",
+		"mongodb": "^4.8.0",
 		"theme-change": "^2.1.0"
 	}
 }
