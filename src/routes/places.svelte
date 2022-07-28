@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { searchParamsObj, countriesArr, searchCriteria, citiesArr } from './stores';
+	import { searchParamsObj, countriesArr, searchCriteria, citiesArr, apiKey } from './stores';
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
@@ -72,7 +72,7 @@
 				$searchParamsObj.lang
 			}&lat=${$searchParamsObj.lat}&limit=${$searchParamsObj.limit}&rate=${
 				$searchParamsObj.score
-			}&kinds=${$searchParamsObj.cat.join()}&apikey=5ae2e3f221c38a28845f05b606b3b76d805d8dd89180dcbbbbcbdbf8`
+			}&kinds=${$searchParamsObj.cat.join()}&apikey=${$apiKey}`
 		);
 
 		var result = await response.json();
@@ -80,10 +80,6 @@
 	};
 
 	function getPlaces() {
-		console.log(
-			'🚀 ~ file: places.svelte ~ line 100 ~ getPlaces ~ $searchParamsObj.cat',
-			$searchParamsObj.cat
-		);
 		if (
 			$searchParamsObj.lat == undefined ||
 			$searchParamsObj.choosenCountry == '' ||
@@ -95,14 +91,15 @@
 				showErr = false;
 			}, 3000);
 			return;
-		} else if ($searchParamsObj.choosenCountry != '' && $searchParamsObj.choosenCity == '') {
-			showErr = true;
-			errMessage = 'Please select the city !';
-			setTimeout(() => {
-				showErr = false;
-			}, 3000);
-			return;
 		}
+		// } else if ($searchParamsObj.choosenCountry != '' && $searchParamsObj.choosenCity == '') {
+		// 	showErr = true;
+		// 	errMessage = 'Please select the city !';
+		// 	setTimeout(() => {
+		// 		showErr = false;
+		// 	}, 3000);
+		// 	return;
+		// }
 		pushCriteria();
 		promisePlaces = fetchPlaces();
 		gotdata = true;
@@ -185,7 +182,7 @@
 						placeName={place.properties.name}
 						placeLat={place.geometry.coordinates[1]}
 						placeLong={place.geometry.coordinates[0]}
-						placeCat={place.properties.kinds.split(',')}
+						placeId={place.properties.xid}
 					/>
 				{/each}
 			</div>

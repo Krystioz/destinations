@@ -264,8 +264,8 @@
 			>
 			<!-- Put this part before </body> tag -->
 			<input type="checkbox" id="my-modal-4" class="modal-toggle" />
-			<div class="modal">
-				<div class="modal-box relative h-80 px-24">
+			<div in:fly class="modal">
+				<div in:fly class="modal-box relative h-80 px-24">
 					<label for="my-modal-4" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
 					<h3 class="text-lg font-bold">Wybierz Kategorie</h3>
 					<div class="form-control">
@@ -309,7 +309,7 @@
 							on:click={closeCriteria}
 							class="delay-50 hover:scale-115 m-4 cursor-pointer rounded-lg shadow-md  transition duration-200 ease-in-out hover:translate-y-1  hover:bg-slate-100 hover:shadow-2xl"
 						>
-							<div on:click={() => applyCriteria(item.id)}>
+							<div on:click={() => applyCriteria(id)}>
 								<p class="m-2">Country: {item.country}</p>
 								<p class="m-2">radius: {item.radius}</p>
 								<p class="m-2">score: {item.score}</p>
