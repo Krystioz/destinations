@@ -1,18 +1,22 @@
 <script lang="ts">
+	import { parse } from 'postcss';
+
 	import { choosenId, choosenSpecificPlace, apiKey } from '../stores';
 	import Spinner from './loading_spinner.svelte';
 	export let placeName: String;
 	export let placeLat: Number;
 	export let placeLong: Number;
 	export let placeId: string;
-	let specificPlace: Promise<any>;
+	let specificPlace: object = {};
 	// export let placeCat: Array<any>;
 
 	function openSpecificInfo() {
 		$choosenId = placeId;
-
 		specificPlace = fetchSpecificPlace();
-		$choosenSpecificPlace = specificPlace;
+		console.log(
+			'🚀 ~ file: places_card.svelte ~ line 16 ~ openSpecificInfo ~ specificPlace',
+			specificPlace
+		);
 	}
 
 	const fetchSpecificPlace = async () => {
@@ -56,44 +60,42 @@
 
 			<!-- Put this part before </body> tag -->
 			<input type="checkbox" id="my-modal-6" class="modal-toggle" />
-			<div class="modal modal-bottom sm:modal-middle">
-				<div class="modal-box">
+			<div class="modal modal-middle">
+				<div class="modal-box max-w-6xl">
+					<label for="my-modal-6" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
 					{#await specificPlace}
 						<Spinner />
 						<!-- specificPlace is pending -->
 					{:then place}
-						<div class="grid grid-cols-2">
+						<div class="grid grid-cols-6 grid-rows-2 prose">
+
 							<img
-								class="w-96 object-cover"
+								class=" w-96 row-start-1 row-end-2 row-span-2 col-span-3  rounded"
 								src="http://placeimg.com/640/480/nature"
 								alt="nature images"
 							/>
 							<h1>hello hello heeeelllooo !!!!</h1>
-							{console.log($choosenSpecificPlace)}
+							
+
 							<p>{$choosenSpecificPlace.name}</p>
-							<p />
 						</div>
 						<!-- specificPlace was fulfilled -->
 					{:catch error}
 						<h1>{error.message}</h1>
 						<!-- specificPlace was rejected -->
 					{/await}
-					<div class="ml-auto">
-						<label for="my-modal-6" class="btn">Yay!</label>
-					</div>
 				</div>
 			</div>
 
-			<div class="tooltip" data-tip="link do google maps">
-				<button class="btn-primary btn-xs rounded-lg text-center"
-					><a
-						class=""
-						target="blank"
-						href="https://www.google.com/maps/search/?api=1&query={placeLat},{placeLong}"
-						>Google maps</a
-					>
-				</button>
-			</div>
+			<button class="btn-primary btn-xs rounded-lg text-center"
+				><a
+					class=""
+					target="blank"
+					href="https://www.google.com/maps/search/?api=1&query={placeLat},{placeLong}"
+					>Google maps</a
+				>
+			</button>
 		</div>
 	</div>
 </div>
+<!-- The button to open modal -->
