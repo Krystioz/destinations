@@ -10,6 +10,6 @@ declare namespace App {
 	// interface Stuff {}
 }
 // Import the functions you need from the SDKs you need
-export default function asas () {
+export default function asas() {
 	console.log('asdasdasd');
 }

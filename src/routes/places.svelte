@@ -4,6 +4,7 @@
 	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
 
+
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
 	import Spinner from '../routes/components/loading_spinner.svelte';
@@ -127,6 +128,8 @@
 		$searchCriteria = criteriaObj;
 		i += 1;
 	}
+
+
 </script>
 
 <!-- START OF HTML DOCCUMENT -->
