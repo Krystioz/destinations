@@ -1,5 +1,4 @@
 import { readable, derived, writable } from 'svelte/store';
-
 export const countryInput = writable('');
 export const citiesInput = writable('');
 export const choosenId = writable('');
@@ -7,7 +6,14 @@ export const countriesArr = writable([]);
 export const citiesArr = writable([]);
 export const selectedCountryCode = writable('');
 export const apiKey = readable('5ae2e3f221c38a28845f05b606b3b76d805d8dd89180dcbbbbcbdbf8');
-export const choosenSpecificPlace = writable({});
+export const choosenSpecificPlace = writable({
+	kinds: '',
+	name: '',
+	wikipedia_extracts: { html: '' },
+	wikipedia: '',
+	preview: { source: '' },
+	image: ''
+});
 
 export const searchParamsObj = writable({
 	lat: 0,

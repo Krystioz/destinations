@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { parse } from 'postcss';
+	import { each } from 'svelte/internal';
+	import { fly, crossfade, fade } from 'svelte/transition';
 
 	import { choosenId, choosenSpecificPlace, apiKey } from '../stores';
 	import Spinner from './loading_spinner.svelte';
@@ -7,16 +9,12 @@
 	export let placeLat: Number;
 	export let placeLong: Number;
 	export let placeId: string;
-	let specificPlace: object = {};
+	let chckSpec: boolean = false;
 	// export let placeCat: Array<any>;
 
 	function openSpecificInfo() {
 		$choosenId = placeId;
-		specificPlace = fetchSpecificPlace();
-		console.log(
-			'🚀 ~ file: places_card.svelte ~ line 16 ~ openSpecificInfo ~ specificPlace',
-			specificPlace
-		);
+		fetchSpecificPlace();
 	}
 
 	const fetchSpecificPlace = async () => {
@@ -26,13 +24,24 @@
 
 		var infoObj = await info.json();
 		$choosenSpecificPlace = infoObj;
-		return infoObj;
+		// 	$choosenSpecificPlace.kinds = $choosenSpecificPlace.kinds
+		// 		.split(',')
+		// 		.map((el: string) => el.replace('_', ' '));
+		// 	console.log($choosenSpecificPlace.kinds);
+		// };
+		$choosenSpecificPlace.kinds = infoObj.kinds.split(',');
+		console.log($choosenSpecificPlace);
 	};
 </script>
 
 <div class="card-compact card w-96 bg-base-100 shadow-xl">
 	<figure>
-		<img class="w-96 object-cover" src="http://placeimg.com/640/480/nature" alt="nature images" />
+		<img
+			loading="lazy"
+			class="w-96 object-cover"
+			src="http://placeimg.com/640/480/nature"
+			alt="nature images"
+		/>
 	</figure>
 	<div class="card-body">
 		<h2 class="card-title">
@@ -58,32 +67,73 @@
 				class="btn-primary btn-xs rounded-md">more info</label
 			>
 
+			<!-- SPECIFIC INFO MODAL OPEN -->
 			<!-- Put this part before </body> tag -->
-			<input type="checkbox" id="my-modal-6" class="modal-toggle" />
+			<input bind:checked={chckSpec} type="checkbox" id="my-modal-6" class="modal-toggle" />
 			<div class="modal modal-middle">
 				<div class="modal-box max-w-6xl">
 					<label for="my-modal-6" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
-					{#await specificPlace}
-						<Spinner />
-						<!-- specificPlace is pending -->
-					{:then place}
-						<div class="grid grid-cols-6 grid-rows-2 prose">
+					{#if chckSpec}
+						{#await $choosenSpecificPlace}
+							<Spinner />
+							<!-- specificPlace is pending -->
+						{:then place}
+							<div class="grid grid-cols-4 auto-rows-auto gap-5">
+								{#if place.preview}
+									<img
+										in:fade
+										class="self-center hover:scale-105 rounded-lg
+									 transition duration-200 ease-in-out col-span-2 row-span-3"
+										src={place.preview.source}
+										alt={place.name}
+									/>
+								{:else}
+									<img
+										class="self-center hover:scale-105 rounded-lg
+									 transition duration-200 ease-in-out col-span-2 row-span-3"
+										src="http://placeimg.com/780/500/nature"
+										alt="nature images"
+									/>
+								{/if}
 
-							<img
-								class=" w-96 row-start-1 row-end-2 row-span-2 col-span-3  rounded"
-								src="http://placeimg.com/640/480/nature"
-								alt="nature images"
-							/>
-							<h1>hello hello heeeelllooo !!!!</h1>
-							
+								<h1 class="text-center col-span-2 pb-0 text-xl text">{place.name}</h1>
+								{#if place.wikipedia_extracts}
+									<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
+								{:else}
+									<p class="col-span-2 text-center text-sm">Brak opisu !</p>
+								{/if}
+								<div
+									class="grid content-end place-items-end gap-4 auto-cols-min grid-flow-col-dense mt-5"
+								>
+									{#if place.wikipedia}
+										<button class="btn grid  btn-xs"
+											><a class="text-xs" target="blank" href={place.wikipedia}>Wikipedia</a
+											></button
+										>
+									{/if}
 
-							<p>{$choosenSpecificPlace.name}</p>
-						</div>
-						<!-- specificPlace was fulfilled -->
-					{:catch error}
-						<h1>{error.message}</h1>
-						<!-- specificPlace was rejected -->
-					{/await}
+									{#if place.image}
+										<button class="btn  btn-xs"
+											><a class="text-xs" target="blank" href={place.image}>Image</a></button
+										>
+									{/if}
+								</div>
+								<div class="grid col-start-4 justify-items-end">
+									<p class="text-left place-self-end mb-2">Tags:</p>
+
+									<div class="flex flex-wrap gap-1 justify-end">
+										{#each place.kinds as tag}
+											<span class="badge badge-xs rounded">{tag.replaceAll('_', ' ')}</span>
+										{/each}
+									</div>
+								</div>
+							</div>
+							<!-- specificPlace was fulfilled -->
+						{:catch error}
+							<h1>{error}</h1>
+							<!-- specificPlace was rejected -->
+						{/await}
+					{/if}
 				</div>
 			</div>
 

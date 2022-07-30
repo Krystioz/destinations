@@ -13,6 +13,11 @@
 	import { fly, crossfade, fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { quintOut } from 'svelte/easing';
+	import type { AnymatchFn } from 'vite';
+
+	type obj = {
+		[key: string]: any; // 👈️ variable key
+	};
 
 	// export let Countries: JSON;
 	export let gotCountries: boolean;
@@ -66,7 +71,7 @@
 	}
 
 	$: {
-		newArrCities = $citiesArr.filter((e) =>
+		newArrCities = $citiesArr.filter((e: obj) =>
 			e.country.includes($searchParamsObj.choosenCountryCode)
 		);
 		countryCities = newArrCities;
@@ -75,7 +80,7 @@
 	$: {
 		newArr = $countriesArr;
 		newArr = $countriesArr.filter(
-			(e) => e.name.toLowerCase().indexOf($countryInput.toLowerCase()) + 1
+			(e: obj) => e.name.toLowerCase().indexOf($countryInput.toLowerCase()) + 1
 		);
 	}
 
