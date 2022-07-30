@@ -40,6 +40,7 @@
 		'architecture'
 	];
 	let showErr = false;
+	let countryChoosen: string;
 	let errMessage: string = '';
 	let i: number = 0;
 
