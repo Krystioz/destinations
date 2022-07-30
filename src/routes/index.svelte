@@ -1,7 +1,6 @@
 <script>
 	import { time, elapsed } from './stores';
-
-
+	import Hero from './components/hero.svelte';
 
 	const formatter = new Intl.DateTimeFormat('en', {
 		hour12: true,
