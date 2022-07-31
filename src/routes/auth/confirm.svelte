@@ -2,29 +2,45 @@
 	// import { sendMagicLink } from '$lib/firebase/client';
 	// import SuccesLogin from '../components/success_login.svelte';
 	import { onMount } from 'svelte';
-	import { isMagicLink } from '$lib/firebase/client';
+	import { isMagicLink, signInWithMagicLink } from '$lib/firebase/client';
+	import { getMagicEmail } from '$lib/localStorage/magicEmail';
+	import Login from '../login.svelte';
 
 	type FormState = 'validating' | 'idle' | 'submitting' | Error;
 
 	let state: FormState = 'validating';
 
 	let email: string | null = null;
+
+	const login = async (magicEmail: string) => {
+		state = 'submitting';
+		email = magicEmail;
+
+		const credential = await signInWithMagicLink(email, window.location.href);
+		const token = await credential.user.getIdToken();
+		state = new Error(token);
+	};
 	// let state: FormState = new Error('server bad brr');
 
 	const handleSubmit: svelte.JSX.EventHandler<SubmitEvent, HTMLFormElement> = async ({
 		currentTarget
 	}) => {
-		state = 'submitting';
-		email = new FormData(currentTarget).get('email') as string;
+		login(new FormData(currentTarget).get('email') as string);
 	};
 
 	onMount(() => {
-		if (isMagicLink(window.location.href)) {
-			state = new Error('Invalid magic link: Something went wrong, please try again');
+		if (!isMagicLink(window.location.href)) {
+			state = new Error('Invalid link: Something went wrong, please try again');
+			return;
+		}
+		const magicEmail = getMagicEmail();
+
+		if (!magicEmail) {
+			state = 'idle';
 			return;
 		}
 
-		state = 'idle';
+		login(magicEmail);
 	});
 </script>
 
@@ -37,7 +53,9 @@
 {:else if state == 'submitting'}
 	<p class="text-center">We are singing you in as {email}</p>
 {:else if state instanceof Error}
-	{state.message}
+	<p class="text-center">
+		{state.message}
+	</p>
 {:else}
 	<div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
 		<div class="w-full max-w-md space-y-8">

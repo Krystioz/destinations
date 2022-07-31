@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { sendMagicLink } from '$lib/firebase/client';
+	import { setMagicEmail } from '$lib/localStorage/magicEmail';
 
 	import SuccesLogin from './components/success_login.svelte';
 
@@ -19,6 +20,7 @@
 
 		try {
 			await sendMagicLink(email, redirectUrl);
+			setMagicEmail(email);
 			state = 'success';
 		} catch (error) {
 			state = error;
