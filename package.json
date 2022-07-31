@@ -25,6 +25,7 @@
 		"eslint": "^8.16.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^4.0.0",
+		"firebase": "^9.9.1",
 		"postcss": "^8.4.14",
 		"prettier": "^2.7.1",
 		"prettier-plugin-tailwindcss": "^0.1.12",
@@ -41,8 +42,6 @@
 		"cities.json": "^1.1.10",
 		"daisyui": "^2.19.0",
 		"dotenv": "^16.0.1",
-		"firebase": "^9.9.0",
-		"mongodb": "^4.8.0",
 		"postcss-load-config": "^4.0.1",
 		"theme-change": "^2.1.0"
 	}

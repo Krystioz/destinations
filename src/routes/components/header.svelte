@@ -98,7 +98,7 @@
 							<li><a href="/">Submenu 2</a></li>
 						</ul>
 					</li>
-					<li><a href="/">Item 3</a></li>
+					<li><a href="/login">Login</a></li>
 				</ul>
 			</div>
 			<a href="/" class="btn btn-ghost text-xl normal-case">Destinations</a>
@@ -124,7 +124,7 @@
 						<li><a href="/">Submenu 2</a></li>
 					</ul>
 				</li>
-				<li><a href="/">Item 3</a></li>
+				<li><a href="/login">Login</a></li>
 			</ul>
 		</div>
 		<div class="navbar-end">
@@ -134,8 +134,7 @@
 					<div class="indicator">
 						<span
 							data-tip="change theme"
-							class="badge indicator-item tooltip tooltip-left badge-secondary"
-							>?</span
+							class="badge indicator-item tooltip tooltip-left badge-secondary">?</span
 						>
 						<button
 							on:click={checkDropdownStatus}

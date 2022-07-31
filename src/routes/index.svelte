@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-	<title>Welcome</title>
+	<title>Destinations</title>
 </svelte:head>
 
 <div class="hero min-h-screen" style="background-image: url(http://placeimg.com/1000/1000/nature);">
