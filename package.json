@@ -44,6 +44,7 @@
 		"dotenv": "^16.0.1",
 		"mongodb": "^4.8.1",
 		"postcss-load-config": "^4.0.1",
-		"theme-change": "^2.1.0"
+		"theme-change": "^2.1.0",
+		"url": "^0.11.0"
 	}
 }

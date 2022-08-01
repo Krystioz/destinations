@@ -7,7 +7,6 @@ import {
 	setPersistence,
 	signInWithEmailLink
 } from 'firebase/auth';
-import { action_destroyer } from 'svelte/internal';
 // import dotenv from 'dotenv';
 // dotenv.config();
 

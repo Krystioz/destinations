@@ -1,10 +1,22 @@
+<!-- <script context="module">
+	export async function load({ fetch }) {
+		const res = await fetch('/Countries');
+		const show = await res.json();
+		return {
+			props: {
+				shows
+			}
+		};
+	}
+</script> -->
 <script lang="ts">
 	import { searchParamsObj, countriesArr, searchCriteria, citiesArr, apiKey } from './stores';
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { load } from '$lib/mongodb/functions';
+	// import { getCountries } from '$lib/mongodb/functions';
+	// export let shows;
 
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
@@ -20,6 +32,27 @@
 		measurementId: 'G-XT8Q3MCF6S',
 		databaseURL: 'https://destinations-17365-default-rtdb.firebaseio.com'
 	};
+
+	// async function getCountries({ fetch }) {
+	// 	const res = await fetch('/Countries', {
+	// 		method: 'GET'
+	// 	})
+	// 		.then((res) => res.json())
+	// 		.then((data) => data);
+	// 	return res.querry;
+	// }
+
+	onMount(async () => {
+		fetch('/Countries')
+			.then((response) => response.json())
+			.then((data) => {
+				console.log(data);
+			})
+			.catch((error) => {
+				console.log(error);
+				return [];
+			});
+	});
 
 	const app = initializeApp(firebaseConfig);
 	const db = getDatabase(app);
@@ -51,8 +84,6 @@
 	// 		.then((data) => data);
 	// 	return res.querry;
 	// }
-
-	let city = load();
 
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
@@ -139,14 +170,6 @@
 		i += 1;
 	}
 </script>
-
-{#await city}
-	<p>waiting for city ... .. . . .</p>
-{:then citya}
-	<p>{citya.population}</p>
-{:catch error}
-	<p>{error}</p>
-{/await}
 
 <!-- START OF HTML DOCCUMENT -->
 

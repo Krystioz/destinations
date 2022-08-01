@@ -24,13 +24,13 @@ if (!cached) cached = global.mongo = {};
 export async function connectToDatabase() {
 	if (cached.conn) return cached.conn;
 	if (!cached.promise) {
-		const conn:any = {};
+		const conn: any = {};
 		const opts = {
 			useNewUrlParser: true,
 			useUnifiedTopology: true
 		};
 		cached.promise = MongoClient.connect(MONGODB_URI, opts)
-			.then((client:any) => {
+			.then((client: any) => {
 				conn.client = client;
 				return client.db(MONGODB_DB);
 			})

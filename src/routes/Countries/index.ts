@@ -5,8 +5,7 @@ export async function get(request: any) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Countries');
-		// console.log(await collection.find().toArray());
-		const querry = await collection.findOne({ cca3: 'GUM' });
+		const querry = await collection.find({}).toArray();
 		return {
 			status: 200,
 			body: {
