@@ -3,6 +3,8 @@
 	import { initializeApp } from 'firebase/app';
 	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
+	import { load } from '$lib/mongodb/functions';
 
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
@@ -42,6 +44,15 @@
 	let countryChoosen: string;
 	let errMessage: string = '';
 	let i: number = 0;
+
+	// async function load() {
+	// 	const res = await fetch('/place')
+	// 		.then((res) => res.json())
+	// 		.then((data) => data);
+	// 	return res.querry;
+	// }
+
+	let city = load();
 
 	get(countries).then((snapshot) => {
 		Countries = snapshot.val();
@@ -128,6 +139,14 @@
 		i += 1;
 	}
 </script>
+
+{#await city}
+	<p>waiting for city ... .. . . .</p>
+{:then citya}
+	<p>{citya.population}</p>
+{:catch error}
+	<p>{error}</p>
+{/await}
 
 <!-- START OF HTML DOCCUMENT -->
 

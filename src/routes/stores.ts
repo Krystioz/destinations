@@ -65,3 +65,4 @@ export const time = readable(new Date(), function start(set) {
 const start: any = new Date();
 
 export const elapsed = derived(time, ($time: any) => Math.round(($time - start) / 1000));
+
