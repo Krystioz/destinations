@@ -1,69 +1,49 @@
-<!-- <script context="module">
-	export async function load({ fetch }) {
-		const res = await fetch('/Countries');
-		const show = await res.json();
-		return {
-			props: {
-				shows
-			}
-		};
-	}
-</script> -->
 <script lang="ts">
 	import { searchParamsObj, countriesArr, searchCriteria, citiesArr, apiKey } from './stores';
-	import { initializeApp } from 'firebase/app';
-	import { getDatabase, ref, onValue, get, equalTo } from 'firebase/database';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	// import { getCountries } from '$lib/mongodb/functions';
-	// export let shows;
 
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
 	import Spinner from '../routes/components/loading_spinner.svelte';
 
-	const firebaseConfig = {
-		apiKey: 'AIzaSyCsEUT-SULj3zJGSNxWGxnPCuOB8EXh4MQ',
-		authDomain: 'destinations-17365.firebaseapp.com',
-		projectId: 'destinations-17365',
-		storageBucket: 'destinations-17365.appspot.com',
-		messagingSenderId: '390176124792',
-		appId: '1:390176124792:web:2ba76a77eeed208014a28d',
-		measurementId: 'G-XT8Q3MCF6S',
-		databaseURL: 'https://destinations-17365-default-rtdb.firebaseio.com'
-	};
-
-	// async function getCountries({ fetch }) {
-	// 	const res = await fetch('/Countries', {
-	// 		method: 'GET'
-	// 	})
-	// 		.then((res) => res.json())
-	// 		.then((data) => data);
-	// 	return res.querry;
-	// }
-
 	onMount(async () => {
 		fetch('/Countries')
 			.then((response) => response.json())
 			.then((data) => {
-				console.log(data);
+				let dataCountries = data.querry;
+
+				$countriesArr = dataCountries.map((el: any) => ({
+					name: el.translations.pol.common,
+					population: el.population,
+					map_link: el.maps,
+					lat: el.latlng[0],
+					lang: el.latlng[1],
+					capital: el.capital,
+					code: el.altSpellings[0],
+					id: i++
+				}));
+				gotCountries = true;
 			})
 			.catch((error) => {
 				console.log(error);
-				return [];
+			});
+
+		fetch('/Cities')
+			.then((response) => response.json())
+			.then((data) => {
+				$citiesArr = data.querry;
+				gotCities = true;
+			})
+			.catch((error) => {
+				console.log(error);
 			});
 	});
 
-	const app = initializeApp(firebaseConfig);
-	const db = getDatabase(app);
 	let gotdata: boolean = false;
 	let gotCountries: boolean = false;
 	let gotCities: boolean = false;
 
-	const countries = ref(db, '/Countries');
-	const cities = ref(db, '/Cities');
-	let Cities: any;
-	let Countries: any;
 	let promisePlaces: Promise<any>;
 	let categories: Array<any> = [
 		'natural',
@@ -74,39 +54,8 @@
 		'architecture'
 	];
 	let showErr = false;
-	let countryChoosen: string;
 	let errMessage: string = '';
 	let i: number = 0;
-
-	// async function load() {
-	// 	const res = await fetch('/place')
-	// 		.then((res) => res.json())
-	// 		.then((data) => data);
-	// 	return res.querry;
-	// }
-
-	get(countries).then((snapshot) => {
-		Countries = snapshot.val();
-		gotCountries = true;
-
-		$countriesArr = Countries.map((el: any) => ({
-			name: el.translations.pol.common,
-			population: el.population,
-			map_link: el.maps,
-			lat: el.latlng[0],
-			lang: el.latlng[1],
-			capital: el.capital,
-			code: el.altSpellings[0],
-			id: i++
-			// capital_latlng: [el.capitalInfo.latlng[0], el.capitalInfo.latlng[0]]
-		}));
-	});
-
-	get(cities).then((snapshot) => {
-		Cities = snapshot.val();
-		gotCities = true;
-		$citiesArr = Cities;
-	});
 
 	const fetchPlaces = async () => {
 		var response = await fetch(
@@ -134,14 +83,6 @@
 			}, 3000);
 			return;
 		}
-		// } else if ($searchParamsObj.choosenCountry != '' && $searchParamsObj.choosenCity == '') {
-		// 	showErr = true;
-		// 	errMessage = 'Please select the city !';
-		// 	setTimeout(() => {
-		// 		showErr = false;
-		// 	}, 3000);
-		// 	return;
-		// }
 		pushCriteria();
 		promisePlaces = fetchPlaces();
 		gotdata = true;

@@ -4,7 +4,7 @@ export async function get(request: any) {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
-		const collection = db.collection('Countries');
+		const collection = await db.collection('Countries');
 		const querry = await collection.find({}).toArray();
 		return {
 			status: 200,

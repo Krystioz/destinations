@@ -10,7 +10,20 @@
 	export let placeLong: Number;
 	export let placeId: string;
 	let chckSpec: boolean = false;
-	// export let placeCat: Array<any>;
+
+	async function fetchAddPlace() {
+		try {
+			await fetch('/Place', {
+				method: 'POST',
+				body: JSON.stringify({ 'id': 'asdasd', 'name': 'asdasd' }),
+				headers: {
+					'content-type': 'application/json'
+				}
+			}).then((res) => res.json()).then((as) => console.log(as));
+		} catch (err: any) {
+			console.log(err.message);
+		}
+	}
 
 	function openSpecificInfo() {
 		$choosenId = placeId;
@@ -30,7 +43,7 @@
 		// 	console.log($choosenSpecificPlace.kinds);
 		// };
 		$choosenSpecificPlace.kinds = infoObj.kinds.split(',');
-		console.log($choosenSpecificPlace);
+		fetchAddPlace();
 	};
 </script>
 
@@ -117,6 +130,7 @@
 											><a class="text-xs" target="blank" href={place.image}>Image</a></button
 										>
 									{/if}
+									<button class="btn btn-primary" on:click={fetchAddPlace} />
 								</div>
 								<div class="grid col-start-4 justify-items-end">
 									<p class="text-left place-self-end mb-2">Tags:</p>

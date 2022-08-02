@@ -13,26 +13,23 @@
 	import { fly, crossfade, fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { quintOut } from 'svelte/easing';
-	import type { AnymatchFn } from 'vite';
+	import Spinner from './loading_spinner.svelte';
+
+	export let gotCountries: boolean;
+	export let gotCities: boolean;
+	export let categories: any;
+	export let getPlacesFunc = () => {};
+	let newArr: Array<any>;
+	let newArrCities: Array<any> = $citiesArr;
+	let countryCities: Array<any>;
+	let cntrCity: boolean = false;
+	let CriteriaModal: boolean;
+	let CountriesModal: boolean;
 
 	type obj = {
 		[key: string]: any; // 👈️ variable key
 	};
 
-	// export let Countries: JSON;
-	export let gotCountries: boolean;
-	export let gotCities: boolean;
-	export let categories: any;
-	export let getPlacesFunc = () => {};
-	// arr countries
-	let newArr: Array<any>;
-	//arr cities
-	let newArrCities: Array<any> = $citiesArr;
-	let countryCities: Array<any>;
-	//false = country true = city
-	let cntrCity: boolean = false;
-
-	let CriteriaModal: boolean;
 	function closeCriteria() {
 		if (CriteriaModal == true) {
 			CriteriaModal = false;
@@ -41,7 +38,6 @@
 		}
 	}
 
-	let CountriesModal: boolean;
 	function closeCounries() {
 		if (CountriesModal == true) {
 			CountriesModal = false;
@@ -213,7 +209,9 @@
 										</p>
 									{/each}
 								{:else}
-									<p>Loading your data</p>
+									<div class="flex flex-row items-center justify-center">
+										<Spinner />
+									</div>
 								{/if}
 							</div>
 						</div>
@@ -250,7 +248,7 @@
 										</p>
 									{/each}
 								{:else}
-									<p>Loading your data</p>
+									<Spinner />
 								{/if}
 							</div>
 						</div>
