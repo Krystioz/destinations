@@ -1,7 +1,7 @@
 import { connectToDatabase } from '$lib/mongodb/db';
 import { ObjectId } from 'mongodb';
 
-export async function get(request: any) {
+export async function get() {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
@@ -23,7 +23,7 @@ export async function get(request: any) {
 	}
 }
 
-export async function post({request}) {
+export async function post({request}:any) {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;

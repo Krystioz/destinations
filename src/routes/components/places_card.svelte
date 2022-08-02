@@ -15,7 +15,7 @@
 		try {
 			await fetch('/Place', {
 				method: 'POST',
-				body: JSON.stringify({ 'id': 'asdasd', 'name': 'asdasd' }),
+				body: JSON.stringify($choosenSpecificPlace),
 				headers: {
 					'content-type': 'application/json'
 				}
