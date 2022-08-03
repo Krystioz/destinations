@@ -1,6 +1,6 @@
 import { connectToDatabase } from '$lib/mongodb/db';
 
-export async function get(request: any) {
+export async function get() {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;

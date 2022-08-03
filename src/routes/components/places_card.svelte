@@ -11,15 +11,32 @@
 	export let placeId: string;
 	let chckSpec: boolean = false;
 
+	async function checkIfPlaceIs() {}
+
 	async function fetchAddPlace() {
 		try {
-			await fetch('/Place', {
+			await fetch('/place', {
 				method: 'POST',
 				body: JSON.stringify($choosenSpecificPlace),
 				headers: {
 					'content-type': 'application/json'
 				}
-			}).then((res) => res.json()).then((as) => console.log(as));
+			})
+				.then((res) => res.json())
+				.then((as) => console.log(as));
+		} catch (err: any) {
+			console.log(err.message);
+		}
+	}
+
+	async function fetchPlace() {
+		const params = new URLSearchParams({ xid: 'N340026548' });
+		try {
+			await fetch(`/place?${params}`, {
+				method: 'GET'
+			})
+				.then((res) => res.json())
+				.then((as) => console.log(as));
 		} catch (err: any) {
 			console.log(err.message);
 		}
@@ -130,7 +147,7 @@
 											><a class="text-xs" target="blank" href={place.image}>Image</a></button
 										>
 									{/if}
-									<button class="btn btn-primary" on:click={fetchAddPlace} />
+									<button class="btn btn-primary" on:click={fetchPlace} />
 								</div>
 								<div class="grid col-start-4 justify-items-end">
 									<p class="text-left place-self-end mb-2">Tags:</p>

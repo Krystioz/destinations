@@ -1,12 +1,13 @@
 import { connectToDatabase } from '$lib/mongodb/db';
 import { ObjectId } from 'mongodb';
 
-export async function get() {
+export async function get({ request }: any) {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
+
 		const collection = await db.collection('Places');
-		const querry = await collection.find({}).toArray();
+		const querry = await collection.findOne(request);
 		return {
 			status: 200,
 			body: {
@@ -23,12 +24,12 @@ export async function get() {
 	}
 }
 
-export async function post({request}:any) {
+export async function post({ request }: any) {
 	try {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 		const collection = db.collection('Places');
-        const data = await request.json()
+		const data = await request.json();
 		// const place = JSON.parse(request.body);
 		await collection.insertOne(data);
 
