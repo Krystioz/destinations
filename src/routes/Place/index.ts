@@ -6,8 +6,11 @@ export async function get({ request }: any) {
 		const dbConnection = await connectToDatabase();
 		const db = dbConnection.db;
 
+		const url = new URL(request.url);
+		const xid = url.searchParams.get('xid');
 		const collection = await db.collection('Places');
-		const querry = await collection.findOne(request);
+		const querry = await collection.findOne({ xid });
+
 		return {
 			status: 200,
 			body: {

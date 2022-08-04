@@ -101,7 +101,8 @@
 					<li><a href="/login">Login</a></li>
 				</ul>
 			</div>
-			<a href="/" class="btn btn-ghost text-xl normal-case">Destinations</a>
+			<h2 class=""><a href="/" class="btn btn-ghost text-2xl normal-case">Destinations</a></h2>
+			<img class="w-6 animate-bounce ml-5" src="src/lib/images/globe.png" alt="earth globe" />
 		</div>
 		<div class="navbar-center hidden lg:flex">
 			<ul class="menu menu-horizontal z-10 p-0">

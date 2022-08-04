@@ -177,11 +177,11 @@
 
 					<!-- Countries -->
 					{#if !cntrCity}
-						<h3 out:fade in:fade class="mb-3 text-center text-lg font-bold">Wybierz państwo</h3>
+						<h3 in:fade class="mb-3 text-center text-lg font-bold">Wybierz państwo</h3>
 						<!-- content here -->
 
 						<!-- start of countries content -->
-						<div out:fade in:fade class="flex flex-col items-center">
+						<div in:fade class="flex flex-col items-center">
 							<input
 								bind:value={$countryInput}
 								type="text"
@@ -193,7 +193,6 @@
 									{#each newArr.slice(0, 40) as country (country.id)}
 										<p
 											in:receive={{ key: country.id }}
-											out:send={{ key: country.id }}
 											animate:flip={{ duration: 450 }}
 											on:click={() => {
 												$searchParamsObj.lat = country.lat;
@@ -220,8 +219,8 @@
 						<div class="absolute top-2 left-3">
 							<button on:click={citiesCntr} class="btn btn-secondary btn-xs">powrót</button>
 						</div>
-						<h3 out:fade in:fade class="mb-3 text-center text-lg font-bold">Wybierz miasto</h3>
-						<div out:fade in:fade class="flex flex-col items-center">
+						<h3 in:fade class="mb-3 text-center text-lg font-bold">Wybierz miasto</h3>
+						<div in:fade class="flex flex-col items-center">
 							<input
 								bind:value={$citiesInput}
 								type="text"
@@ -233,7 +232,6 @@
 									{#each newArrCities.slice(0, 30) as city (city)}
 										<p
 											in:receive={{ key: city.id }}
-											out:send={{ key: city.id }}
 											animate:flip={{ duration: 450 }}
 											on:click={() => {
 												$searchParamsObj.lat = city.lat;

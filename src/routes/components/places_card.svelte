@@ -10,8 +10,21 @@
 	export let placeLong: Number;
 	export let placeId: string;
 	let chckSpec: boolean = false;
+	let placeFetched: any;
 
-	async function checkIfPlaceIs() {}
+	function checkIfPlaceIs(result: any) {
+		if (result.querry == null || result.querry == '') {
+			fetchSpecificPlace();
+			console.log(result.querry);
+			console.log('no place in the database');
+		} else {
+			$choosenSpecificPlace = result.querry;
+
+			// $choosenSpecificPlace.kinds = result.querry.kinds.split(',');
+			console.log($choosenSpecificPlace);
+			console.log('place is in the database');
+		}
+	}
 
 	async function fetchAddPlace() {
 		try {
@@ -30,13 +43,14 @@
 	}
 
 	async function fetchPlace() {
-		const params = new URLSearchParams({ xid: 'N340026548' });
+		const params = new URLSearchParams({ xid: $choosenId });
 		try {
 			await fetch(`/place?${params}`, {
 				method: 'GET'
 			})
 				.then((res) => res.json())
-				.then((as) => console.log(as));
+				.then((as) => (placeFetched = as))
+				.then((check) => checkIfPlaceIs(check));
 		} catch (err: any) {
 			console.log(err.message);
 		}
@@ -44,21 +58,15 @@
 
 	function openSpecificInfo() {
 		$choosenId = placeId;
-		fetchSpecificPlace();
+		fetchPlace();
 	}
 
 	const fetchSpecificPlace = async () => {
 		var info = await fetch(
 			`https://api.opentripmap.com/0.1/en/places/xid/${$choosenId}?apikey=${$apiKey}`
 		);
-
-		var infoObj = await info.json();
+		var infoObj: any = await info.json();
 		$choosenSpecificPlace = infoObj;
-		// 	$choosenSpecificPlace.kinds = $choosenSpecificPlace.kinds
-		// 		.split(',')
-		// 		.map((el: string) => el.replace('_', ' '));
-		// 	console.log($choosenSpecificPlace.kinds);
-		// };
 		$choosenSpecificPlace.kinds = infoObj.kinds.split(',');
 		fetchAddPlace();
 	};
@@ -82,11 +90,7 @@
 		{#if placeName == ''}
 			<p>Brak opisu</p>
 		{:else}
-			<p>
-				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquid, facilis! Non fuga
-				mollitia labore quaerat sequi porro dicta iste at illo consequatur atque iure tempore, sed
-				optio, alias nulla velit.
-			</p>
+			<p />
 		{/if}
 
 		<div class="card-actions justify-end">
@@ -103,68 +107,65 @@
 			<div class="modal modal-middle">
 				<div class="modal-box max-w-6xl">
 					<label for="my-modal-6" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
-					{#if chckSpec}
-						{#await $choosenSpecificPlace}
-							<Spinner />
-							<!-- specificPlace is pending -->
-						{:then place}
-							<div class="grid grid-cols-4 auto-rows-auto gap-5">
-								{#if place.preview}
-									<img
-										in:fade
-										class="self-center hover:scale-105 rounded-lg
+
+					{#await $choosenSpecificPlace}
+						<Spinner />
+						<!-- specificPlace is pending -->
+					{:then place}
+						<div class="grid grid-cols-4 auto-rows-auto gap-5">
+							{#if place.preview}
+								<img
+									in:fade
+									class="self-center hover:scale-105 rounded-lg
 									 transition duration-200 ease-in-out col-span-2 row-span-3"
-										src={place.preview.source}
-										alt={place.name}
-									/>
-								{:else}
-									<img
-										class="self-center hover:scale-105 rounded-lg
+									src={place.preview.source}
+									alt={place.name}
+								/>
+							{:else}
+								<img
+									class="self-center hover:scale-105 rounded-lg
 									 transition duration-200 ease-in-out col-span-2 row-span-3"
-										src="http://placeimg.com/780/500/nature"
-										alt="nature images"
-									/>
+									src="http://placeimg.com/780/500/nature"
+									alt="nature images"
+								/>
+							{/if}
+
+							<h1 class="text-center col-span-2 pb-0 text-lg text">{place.name}</h1>
+							{#if place.wikipedia_extracts}
+								<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
+							{:else}
+								<p class="col-span-2 text-center text-sm">Brak opisu !</p>
+							{/if}
+							<div
+								class="grid content-end place-items-end gap-4 auto-cols-min grid-flow-col-dense mt-5"
+							>
+								{#if place.wikipedia}
+									<button class="btn grid  btn-xs"
+										><a class="text-xs" target="blank" href={place.wikipedia}>Wikipedia</a></button
+									>
 								{/if}
 
-								<h1 class="text-center col-span-2 pb-0 text-xl text">{place.name}</h1>
-								{#if place.wikipedia_extracts}
-									<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
-								{:else}
-									<p class="col-span-2 text-center text-sm">Brak opisu !</p>
+								{#if place.image}
+									<button class="btn  btn-xs"
+										><a class="text-xs" target="blank" href={place.image}>Image</a></button
+									>
 								{/if}
-								<div
-									class="grid content-end place-items-end gap-4 auto-cols-min grid-flow-col-dense mt-5"
-								>
-									{#if place.wikipedia}
-										<button class="btn grid  btn-xs"
-											><a class="text-xs" target="blank" href={place.wikipedia}>Wikipedia</a
-											></button
-										>
-									{/if}
+							</div>
+							<div class="grid col-start-4 justify-items-end">
+								<p class="text-left place-self-end mb-2">Tags:</p>
 
-									{#if place.image}
-										<button class="btn  btn-xs"
-											><a class="text-xs" target="blank" href={place.image}>Image</a></button
-										>
-									{/if}
-									<button class="btn btn-primary" on:click={fetchPlace} />
-								</div>
-								<div class="grid col-start-4 justify-items-end">
-									<p class="text-left place-self-end mb-2">Tags:</p>
-
-									<div class="flex flex-wrap gap-1 justify-end">
-										{#each place.kinds as tag}
-											<span class="badge badge-xs rounded">{tag.replaceAll('_', ' ')}</span>
-										{/each}
-									</div>
+								<div class="flex flex-wrap gap-1 justify-end">
+									{#each place.kinds as tag}
+										<span class="badge badge-xs rounded">{tag.replaceAll('_', ' ')}</span>
+									{/each}
 								</div>
 							</div>
-							<!-- specificPlace was fulfilled -->
-						{:catch error}
-							<h1>{error}</h1>
-							<!-- specificPlace was rejected -->
-						{/await}
-					{/if}
+						</div>
+						<!-- specificPlace was fulfilled -->
+					{:catch error}
+						<h1>{error}</h1>
+						<!-- specificPlace was rejected -->
+					{/await}
 				</div>
 			</div>
 
