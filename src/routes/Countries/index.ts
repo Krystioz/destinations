@@ -3,8 +3,7 @@ import { connectToDatabase } from '$lib/mongodb/db';
 export async function get() {
 	try {
 		const dbConnection = await connectToDatabase();
-		const db = dbConnection.db;
-		const collection = await db.collection('Countries');
+		const collection = await dbConnection.db.collection('Countries');
 		const querry = await collection.find({}).toArray();
 		return {
 			status: 200,

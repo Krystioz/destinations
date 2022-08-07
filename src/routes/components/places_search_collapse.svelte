@@ -208,7 +208,7 @@
 										</p>
 									{/each}
 								{:else}
-									<div class="flex flex-row items-center justify-center">
+									<div class="col-start-2 flex">
 										<Spinner />
 									</div>
 								{/if}
@@ -246,7 +246,9 @@
 										</p>
 									{/each}
 								{:else}
-									<Spinner />
+									<div class="col-start-3">
+										<Spinner />
+									</div>
 								{/if}
 							</div>
 						</div>

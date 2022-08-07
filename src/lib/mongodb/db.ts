@@ -40,5 +40,5 @@ export async function connectToDatabase() {
 			});
 	}
 	await cached.promise;
-	return cached.conn.db;
+	return await cached.conn.db;
 }
