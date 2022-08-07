@@ -3,8 +3,9 @@
 	import { each } from 'svelte/internal';
 	import { fly, crossfade, fade } from 'svelte/transition';
 
-	import { choosenId, choosenSpecificPlace, apiKey } from '../stores';
+	import { choosenId, choosenSpecificPlace } from '../stores';
 	import Spinner from './loading_spinner.svelte';
+	const OPENTRIPMAP_API = import.meta.env.VITE_OPENTRIPMAP_API;
 	export let placeName: String;
 	export let placeLat: Number;
 	export let placeLong: Number;
@@ -28,7 +29,7 @@
 
 	async function fetchAddPlace() {
 		try {
-			await fetch('/place', {
+			await fetch('/Place', {
 				method: 'POST',
 				body: JSON.stringify($choosenSpecificPlace),
 				headers: {
@@ -45,7 +46,7 @@
 	async function fetchPlace() {
 		const params = new URLSearchParams({ xid: $choosenId });
 		try {
-			await fetch(`/place?${params}`, {
+			await fetch(`/Place?${params}`, {
 				method: 'GET'
 			})
 				.then((res) => res.json())
@@ -63,16 +64,17 @@
 
 	const fetchSpecificPlace = async () => {
 		var info = await fetch(
-			`https://api.opentripmap.com/0.1/en/places/xid/${$choosenId}?apikey=${$apiKey}`
+			`https://api.opentripmap.com/0.1/en/places/xid/${$choosenId}?apikey=${OPENTRIPMAP_API}`
 		);
 		var infoObj: any = await info.json();
 		$choosenSpecificPlace = infoObj;
 		$choosenSpecificPlace.kinds = infoObj.kinds.split(',');
+
 		fetchAddPlace();
 	};
 </script>
 
-<div class="card-compact card w-96 bg-base-100 shadow-xl">
+<div class="card-compact card w-96 bg-slate-100  transition-shadow hover:shadow-2xl">
 	<figure>
 		<img
 			loading="lazy"
@@ -105,62 +107,91 @@
 			<!-- Put this part before </body> tag -->
 			<input bind:checked={chckSpec} type="checkbox" id="my-modal-6" class="modal-toggle" />
 			<div class="modal modal-middle">
-				<div class="modal-box max-w-6xl">
+				<div class:max-w-6xl={$choosenSpecificPlace.preview} class="modal-box min-w-min ">
 					<label for="my-modal-6" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
 
 					{#await $choosenSpecificPlace}
 						<Spinner />
 						<!-- specificPlace is pending -->
 					{:then place}
-						<div class="grid grid-cols-4 auto-rows-auto gap-5">
-							{#if place.preview}
+						{#if place.preview}
+							<div class="grid auto-rows-auto auto-cols-auto gap-5">
 								<img
 									in:fade
-									class="self-center hover:scale-105 rounded-lg
-									 transition duration-200 ease-in-out col-span-2 row-span-3"
+									class="col-span-2 row-span-3 self-center
+									 rounded-lg transition duration-200 ease-in-out hover:scale-105"
 									src={place.preview.source}
 									alt={place.name}
 								/>
-							{:else}
-								<img
-									class="self-center hover:scale-105 rounded-lg
-									 transition duration-200 ease-in-out col-span-2 row-span-3"
-									src="http://placeimg.com/780/500/nature"
-									alt="nature images"
-								/>
-							{/if}
 
-							<h1 class="text-center col-span-2 pb-0 text-lg text">{place.name}</h1>
-							{#if place.wikipedia_extracts}
-								<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
-							{:else}
-								<p class="col-span-2 text-center text-sm">Brak opisu !</p>
-							{/if}
-							<div
-								class="grid content-end place-items-end gap-4 auto-cols-min grid-flow-col-dense mt-5"
-							>
-								{#if place.wikipedia}
-									<button class="btn grid  btn-xs"
-										><a class="text-xs" target="blank" href={place.wikipedia}>Wikipedia</a></button
-									>
+								<h1 class="text col-span-2 pb-0 text-center text-lg">{place.name}</h1>
+								{#if place.wikipedia_extracts}
+									<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
+								{:else}
+									<p class="col-span-2 text-center text-sm">Brak opisu !</p>
 								{/if}
+								<div
+									class="mt-5 grid auto-cols-min grid-flow-col-dense place-items-end content-end gap-4"
+								>
+									{#if place.wikipedia}
+										<button class="btn btn-xs  grid"
+											><a class="text-xs" target="blank" href={place.wikipedia}>Wikipedia</a
+											></button
+										>
+									{/if}
 
-								{#if place.image}
-									<button class="btn  btn-xs"
-										><a class="text-xs" target="blank" href={place.image}>Image</a></button
-									>
-								{/if}
-							</div>
-							<div class="grid col-start-4 justify-items-end">
-								<p class="text-left place-self-end mb-2">Tags:</p>
+									{#if place.image}
+										<button class="btn  btn-xs"
+											><a class="text-xs" target="blank" href={place.image}>Image</a></button
+										>
+									{/if}
+								</div>
+								<div class="col-start-4 grid justify-items-end">
+									<p class="mb-2 place-self-end text-left">Tags:</p>
 
-								<div class="flex flex-wrap gap-1 justify-end">
-									{#each place.kinds as tag}
-										<span class="badge badge-xs rounded">{tag.replaceAll('_', ' ')}</span>
-									{/each}
+									<div class="flex flex-wrap justify-end gap-1">
+										{#each place.kinds as tag}
+											<span class="badge badge-xs rounded">{tag.replaceAll('_', ' ')}</span>
+										{/each}
+									</div>
 								</div>
 							</div>
-						</div>
+						{:else}
+							<div class="grid auto-rows-auto auto-cols-auto gap-5">
+								<h1 class="text pb-0 text-center text-lg">{place.name}</h1>
+								{#if place.wikipedia_extracts}
+									<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
+								{:else}
+									<p class=" text-center text-sm">Brak opisu !</p>
+								{/if}
+								<div
+									class="mt-5 grid auto-cols-min grid-flow-col-dense place-items-end content-end gap-4"
+								>
+									{#if place.wikipedia}
+										<button class="btn btn-xs  grid"
+											><a class="text-xs" target="blank" href={place.wikipedia}>Wikipedia</a
+											></button
+										>
+									{/if}
+
+									{#if place.image}
+										<button class="btn  btn-xs"
+											><a class="text-xs" target="blank" href={place.image}>Image</a></button
+										>
+									{/if}
+								</div>
+								<div class=" grid justify-items-end">
+									<p class="mb-2 place-self-end text-left">Tags:</p>
+
+									<div class="flex flex-wrap justify-end gap-1">
+										{#each place.kinds as tag}
+											<span class="badge badge-xs rounded">{tag.replaceAll('_', ' ')}</span>
+										{/each}
+									</div>
+								</div>
+							</div>
+						{/if}
+
 						<!-- specificPlace was fulfilled -->
 					{:catch error}
 						<h1>{error}</h1>

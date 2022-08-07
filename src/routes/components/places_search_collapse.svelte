@@ -7,17 +7,19 @@
 		searchParamsObjDef,
 		countriesArr,
 		citiesArr,
-		citiesInput
+		citiesInput,
+		searchCatObj
 	} from '../stores';
 	import { countryInput } from '../stores';
 	import { fly, crossfade, fade } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { quintOut } from 'svelte/easing';
 	import Spinner from './loading_spinner.svelte';
+	import CatCollapse from './category_collapse.svelte';
 
 	export let gotCountries: boolean;
 	export let gotCities: boolean;
-	export let categories: any;
+
 	export let getPlacesFunc = () => {};
 	let newArr: Array<any>;
 	let newArrCities: Array<any> = $citiesArr;
@@ -267,12 +269,16 @@
 			>
 			<!-- Put this part before </body> tag -->
 			<input type="checkbox" id="my-modal-4" class="modal-toggle" />
-			<div in:fly class="modal">
-				<div in:fly class="modal-box relative h-80 px-24">
+			<div class="modal">
+				<div class="prose modal-box relative flex max-w-xl flex-col items-center px-24">
 					<label for="my-modal-4" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
-					<h3 class="text-lg font-bold">Wybierz Kategorie</h3>
+					<h3 class="text-center text-lg font-bold">Wybierz Kategorie</h3>
 					<div class="form-control">
-						{#each categories as category}
+						{#each Object.keys($searchCatObj) as obj, i}
+							<!-- content here -->
+							<CatCollapse catHead={obj} catPar={Object.values($searchCatObj)[i]} />
+						{/each}
+						<!-- {#each categories as category}
 							<label class="label cursor-pointer">
 								<span class="label-text">{category}</span>
 								<input
@@ -282,7 +288,7 @@
 									class="checkbox-info checkbox"
 								/>
 							</label>
-						{/each}
+						{/each} -->
 					</div>
 				</div>
 			</div>

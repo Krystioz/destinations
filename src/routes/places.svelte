@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { searchParamsObj, countriesArr, searchCriteria, citiesArr, apiKey } from './stores';
+	import { searchParamsObj, countriesArr, searchCriteria, citiesArr } from './stores';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	const OPENTRIPMAP_API = import.meta.env.VITE_OPENTRIPMAP_API;
 
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
@@ -63,7 +64,7 @@
 				$searchParamsObj.lang
 			}&lat=${$searchParamsObj.lat}&limit=${$searchParamsObj.limit}&rate=${
 				$searchParamsObj.score
-			}&kinds=${$searchParamsObj.cat.join()}&apikey=${$apiKey}`
+			}&kinds=${$searchParamsObj.cat.join()}&apikey=${OPENTRIPMAP_API}`
 		);
 
 		var result = await response.json();
@@ -125,7 +126,7 @@
 	</div>
 	<div class="divider mt-12">Odkrywaj</div>
 	<div class="z-10 flex flex-row justify-center align-middle">
-		<SearchCollapse getPlacesFunc={() => getPlaces()} {gotCountries} {gotCities} {categories} />
+		<SearchCollapse getPlacesFunc={() => getPlaces()} {gotCountries} {gotCities} />
 	</div>
 	{#if showErr}
 		<div
