@@ -5,7 +5,7 @@
 </script>
 
 <div
-	class="rounded-lg collapse my-2 max-w-md bg-slate-100 shadow-lg transition duration-200 ease-in-out hover:translate-y-1 hover:scale-105 hover:shadow-2xl"
+	class="collapse my-2 max-w-md rounded-lg bg-slate-100 shadow-lg transition duration-200 ease-in-out hover:translate-y-1 hover:scale-105 hover:shadow-2xl"
 >
 	<input type="checkbox" class="peer" />
 	<div class="collapse-title text-center">{catHead.replaceAll('_', ' ')}</div>
