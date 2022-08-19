@@ -21,3 +21,13 @@ export async function get() {
 		};
 	}
 }
+
+const http = require('http');
+http
+	.createServer(function (req, res) {
+		res.write('hello, world!');
+		``;
+		res.end();
+	})
+	.listen(8080);
+console.log('server started ! listening on port 8080');
