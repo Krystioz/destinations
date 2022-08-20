@@ -11,11 +11,6 @@
 	<div class="collapse-title text-center">{catHead.replaceAll('_', ' ')}</div>
 	<div class="collapse-content">
 		{#each catPar as catgry}
-			<!-- <label class="label cursor-pointer">
-				<span class="label-text">{catgry.replaceAll('_', ' ')}</span>
-				<input type="checkbox" checked="checked" class="checkbox checkbox-primary" />
-			</label> -->
-
 			<label class="label cursor-pointer">
 				<span class="label-text">{catgry.replaceAll('_', ' ')}</span>
 				<input

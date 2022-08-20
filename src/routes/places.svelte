@@ -13,7 +13,6 @@
 			.then((response) => response.json())
 			.then((data) => {
 				let dataCountries = data.query;
-				console.log(data);
 
 				$countriesArr = dataCountries.map((el: any) => ({
 					name: el.translations.pol.common,

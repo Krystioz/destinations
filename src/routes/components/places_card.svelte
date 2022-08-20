@@ -14,16 +14,15 @@
 	let placeFetched: any;
 
 	function checkIfPlaceIs(result: any) {
-		if (result.querry == null || result.querry == '') {
+		if (result.query == null || result.query == '') {
 			fetchSpecificPlace();
-			console.log(result.querry);
+
 			console.log('no place in the database');
 		} else {
-			$choosenSpecificPlace = result.querry;
+			$choosenSpecificPlace = result.query;
 
 			// $choosenSpecificPlace.kinds = result.querry.kinds.split(',');
-			console.log($choosenSpecificPlace);
-			console.log('place is in the database');
+
 		}
 	}
 
@@ -37,7 +36,7 @@
 				}
 			})
 				.then((res) => res.json())
-				.then((as) => console.log(as));
+
 		} catch (err: any) {
 			console.log(err.message);
 		}
@@ -45,6 +44,7 @@
 
 	async function fetchPlace() {
 		const params = new URLSearchParams({ xid: $choosenId });
+
 		try {
 			await fetch(`/Place?${params}`, {
 				method: 'GET'
@@ -74,15 +74,15 @@
 	};
 </script>
 
-<div class="card-compact card w-96 bg-slate-100  transition-shadow hover:shadow-2xl">
-	<figure>
+<div class="card card-compact w-96 bg-slate-100  transition-shadow hover:shadow-2xl">
+	<!-- <figure>
 		<img
 			loading="lazy"
 			class="w-96 object-cover"
 			src="http://placeimg.com/640/480/nature"
 			alt="nature images"
 		/>
-	</figure>
+	</figure> -->
 	<div class="card-body">
 		<h2 class="card-title">
 			{placeName}
@@ -100,7 +100,7 @@
 			<label
 				on:click={() => openSpecificInfo()}
 				for="my-modal-6"
-				class="btn-primary btn-xs rounded-md">more info</label
+				class="btn-primary btn-xs rounded-md">Discover</label
 			>
 
 			<!-- SPECIFIC INFO MODAL OPEN -->

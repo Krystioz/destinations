@@ -117,7 +117,7 @@
 				.then((response) => response.json())
 				.then((data) => {
 					$citiesArr = data.query;
-					console.log($citiesArr);
+
 					gotCities = true;
 				});
 		} catch (err) {
@@ -233,7 +233,6 @@
 												$searchParamsObj.choosenCountry = country.name;
 												$searchParamsObj.choosenCountryCode = country.code;
 												citiesCntr();
-												console.log($searchParamsObj);
 											}}
 											href=""
 											class="m-2 cursor-pointer text-xs"
