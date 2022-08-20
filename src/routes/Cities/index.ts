@@ -1,15 +1,16 @@
-import { connectToDatabase } from '$lib/mongodb/db';
+import { getCities, getCountryCities } from '$lib/mongodb/db';
 
-export async function get() {
+export async function get({ request }: any) {
 	try {
-		const dbConnection = await connectToDatabase();
-		const db = dbConnection.db;
-		const collection = await db.collection('Cities');
-		const querry = await collection.find({}).toArray();
+		const url = new URL(request.url);
+		const xid = url.searchParams.get('country');
+
+		const query = await getCountryCities(xid);
+
 		return {
 			status: 200,
 			body: {
-				querry
+				query
 			}
 		};
 	} catch (err: any) {
@@ -22,12 +23,12 @@ export async function get() {
 	}
 }
 
-const http = require('http');
-http
-	.createServer(function (req, res) {
-		res.write('hello, world!');
-		``;
-		res.end();
-	})
-	.listen(8080);
-console.log('server started ! listening on port 8080');
+// const http = require('http');
+// http
+// 	.createServer(function (req, res) {
+// 		res.write('hello, world!');
+// 		``;
+// 		res.end();
+// 	})
+// 	.listen(8080);
+// console.log('server started ! listening on port 8080');

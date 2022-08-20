@@ -1,14 +1,12 @@
-import { connectToDatabase } from '$lib/mongodb/db';
+import { getCountries } from '$lib/mongodb/db';
 
 export async function get() {
 	try {
-		const dbConnection = await connectToDatabase();
-		const collection = await dbConnection.db.collection('Countries');
-		const querry = await collection.find({}).toArray();
+		const query = await getCountries();
 		return {
 			status: 200,
 			body: {
-				querry
+				query
 			}
 		};
 	} catch (err: any) {
