@@ -103,10 +103,41 @@
 	function citiesCntr() {
 		if (cntrCity == false) {
 			cntrCity = true;
+			fetchCities();
 		} else {
 			cntrCity = false;
+			gotCities = false;
 		}
 	}
+
+	async function fetchCities() {
+		const params = new URLSearchParams({ country: $searchParamsObj.choosenCountryCode });
+		try {
+			await fetch(`/Cities?${params}`, { method: 'GET' })
+				.then((response) => response.json())
+				.then((data) => {
+					$citiesArr = data.query;
+					console.log($citiesArr);
+					gotCities = true;
+				});
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	// 	async function fetchPlace() {
+	// 	const params = new URLSearchParams({ xid: $choosenId });
+	// 	try {
+	// 		await fetch(`/Place?${params}`, {
+	// 			method: 'GET'
+	// 		})
+	// 			.then((res) => res.json())
+	// 			.then((as) => (placeFetched = as))
+	// 			.then((check) => checkIfPlaceIs(check));
+	// 	} catch (err: any) {
+	// 		console.log(err.message);
+	// 	}
+	// }
 </script>
 
 <div
@@ -202,6 +233,7 @@
 												$searchParamsObj.choosenCountry = country.name;
 												$searchParamsObj.choosenCountryCode = country.code;
 												citiesCntr();
+												console.log($searchParamsObj);
 											}}
 											href=""
 											class="m-2 cursor-pointer text-xs"

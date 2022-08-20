@@ -12,7 +12,8 @@
 		fetch('/Countries')
 			.then((response) => response.json())
 			.then((data) => {
-				let dataCountries = data.querry;
+				let dataCountries = data.query;
+				console.log(data);
 
 				$countriesArr = dataCountries.map((el: any) => ({
 					name: el.translations.pol.common,
@@ -28,17 +29,7 @@
 			})
 			.catch((error) => {
 				console.log(error);
-			});
-
-		fetch('/Cities')
-			.then((response) => response.json())
-			.then((data) => {
-				$citiesArr = data.querry;
-				gotCities = true;
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+			});		
 	});
 
 	let gotdata: boolean = false;
