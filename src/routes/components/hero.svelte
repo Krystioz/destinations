@@ -1,8 +1,12 @@
-<div class="hero items-start min-h-screen bg-base-200">
+<script lang="ts">
+
+</script>
+
+<div class="hero min-h-screen items-start bg-base-200">
 	<div class="hero-content flex-col lg:flex-row">
 		<img
 			src="https://placeimg.com/1000/400/arch"
-			class="max-w-xl w-full rounded-lg shadow-2xl"
+			class="w-full max-w-xl rounded-lg shadow-2xl"
 			alt="nature"
 		/>
 		<div class="prose">
@@ -16,3 +20,5 @@
 		</div>
 	</div>
 </div>
+
+

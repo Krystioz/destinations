@@ -2,11 +2,20 @@
 	import { searchParamsObj, countriesArr, searchCriteria, citiesArr } from './stores';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	import Map from './components/google_map.svelte';
 	const OPENTRIPMAP_API = import.meta.env.VITE_OPENTRIPMAP_API;
 
 	import PlaceCard from '../routes/components/places_card.svelte';
 	import SearchCollapse from '../routes/components/places_search_collapse.svelte';
 	import Spinner from '../routes/components/loading_spinner.svelte';
+
+	let gotdata: boolean = false;
+	let gotCountries: boolean = false;
+	let gotCities: boolean = false;
+	let promisePlaces: Promise<any>;
+	let showErr = false;
+	let errMessage: string = '';
+	let i: number = 0;
 
 	onMount(async () => {
 		fetch('/Countries')
@@ -28,25 +37,8 @@
 			})
 			.catch((error) => {
 				console.log(error);
-			});		
+			});
 	});
-
-	let gotdata: boolean = false;
-	let gotCountries: boolean = false;
-	let gotCities: boolean = false;
-
-	let promisePlaces: Promise<any>;
-	let categories: Array<any> = [
-		'natural',
-		'other',
-		'religion',
-		'historical',
-		'sport',
-		'architecture'
-	];
-	let showErr = false;
-	let errMessage: string = '';
-	let i: number = 0;
 
 	const fetchPlaces = async () => {
 		var response = await fetch(
@@ -64,7 +56,7 @@
 	function getPlaces() {
 		if (
 			$searchParamsObj.lat == undefined ||
-			$searchParamsObj.choosenCountry == '' ||
+			// $searchParamsObj.choosenCountry == '' ||
 			$searchParamsObj.cat == ['']
 		) {
 			showErr = true;
@@ -165,3 +157,5 @@
 		{/await}
 	{/if}
 </section>
+
+<Map />

@@ -22,7 +22,6 @@
 			$choosenSpecificPlace = result.query;
 
 			// $choosenSpecificPlace.kinds = result.querry.kinds.split(',');
-
 		}
 	}
 
@@ -34,9 +33,7 @@
 				headers: {
 					'content-type': 'application/json'
 				}
-			})
-				.then((res) => res.json())
-
+			}).then((res) => res.json());
 		} catch (err: any) {
 			console.log(err.message);
 		}
@@ -128,7 +125,7 @@
 								{#if place.wikipedia_extracts}
 									<p in:fade class="col-span-2 text-right">{@html place.wikipedia_extracts.html}</p>
 								{:else}
-									<p class="col-span-2 text-center text-sm">Brak opisu !</p>
+									<p class="col-span-2 text-center text-sm">Brak opisu!</p>
 								{/if}
 								<div
 									class="mt-5 grid auto-cols-min grid-flow-col-dense place-items-end content-end gap-4"

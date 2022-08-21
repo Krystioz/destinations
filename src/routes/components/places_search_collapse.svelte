@@ -16,6 +16,7 @@
 	import { quintOut } from 'svelte/easing';
 	import Spinner from './loading_spinner.svelte';
 	import CatCollapse from './category_collapse.svelte';
+	import Map from './google_map.svelte';
 
 	export let gotCountries: boolean;
 	export let gotCities: boolean;
@@ -361,5 +362,24 @@
 			</div>
 		</div>
 		<button on:click={() => resetCriteria()} class="btn btn-outline btn-warning">Reset</button>
+		<!-- google maps modal -->
+		<div>
+			<label
+				for="my-modal-8"
+				class="modal-button btn mx-2 w-24  transition delay-150 duration-200 ease-in-out hover:translate-y-1 hover:scale-105"
+				>Mapa</label
+			>
+			<!-- Put this part before </body> tag -->
+			<input type="checkbox" id="my-modal-8" class="modal-toggle" />
+			<div class="modal">
+				<div class="prose modal-box relative flex h-1/2 max-w-3xl flex-col items-center px-24">
+					<label for="my-modal-8" class="btn btn-circle btn-sm absolute right-2 top-2">✕</label>
+					<Map />
+					<h3 class="text-center text-lg font-bold">Wybierz punkt na mapie</h3>
+					<div class="form-control" />
+				</div>
+			</div>
+		</div>
+		<!-- Google maps modal -->
 	</div>
 </div>
