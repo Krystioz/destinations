@@ -1,5 +1,4 @@
-import { findPlace, addPlace } from '$lib/mongodb/db';
-import { ObjectId } from 'mongodb';
+import { addPlace, findPlace } from '$lib/mongodb/db';
 
 export async function get({ request }: any) {
 	try {
