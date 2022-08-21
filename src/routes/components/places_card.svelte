@@ -71,7 +71,7 @@
 	};
 </script>
 
-<div class="card card-compact w-96 bg-slate-100  transition-shadow hover:shadow-2xl">
+<div class="card-compact card w-96 bg-slate-100  transition-shadow hover:shadow-2xl">
 	<!-- <figure>
 		<img
 			loading="lazy"
@@ -94,11 +94,19 @@
 
 		<div class="card-actions justify-end">
 			<!-- The button to open modal -->
-			<label
-				on:click={() => openSpecificInfo()}
-				for="my-modal-6"
-				class="btn-primary btn-xs rounded-md">Discover</label
-			>
+			<div class="flex flex-row items-center gap-4">
+				<button class="btn-primary btn-xs rounded-md">
+					<label on:click={() => openSpecificInfo()} for="my-modal-6" class="">Discover</label>
+				</button>
+				<button class="btn-primary btn-xs rounded-lg text-center"
+					><a
+						class="h-full"
+						target="blank"
+						href="https://www.google.com/maps/search/?api=1&query={placeLat},{placeLong}"
+						>Google maps</a
+					>
+				</button>
+			</div>
 
 			<!-- SPECIFIC INFO MODAL OPEN -->
 			<!-- Put this part before </body> tag -->
@@ -196,15 +204,6 @@
 					{/await}
 				</div>
 			</div>
-
-			<button class="btn-primary btn-xs rounded-lg text-center"
-				><a
-					class=""
-					target="blank"
-					href="https://www.google.com/maps/search/?api=1&query={placeLat},{placeLong}"
-					>Google maps</a
-				>
-			</button>
 		</div>
 	</div>
 </div>
