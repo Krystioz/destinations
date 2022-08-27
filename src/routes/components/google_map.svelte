@@ -51,9 +51,6 @@
 			});
 	});
 
-	function getLatLng(e) {
-		console.log(e);
-	}
 </script>
 
 <div id="map" class="map mx-auto h-full w-full" />
