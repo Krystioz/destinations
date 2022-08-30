@@ -5,7 +5,7 @@ exports.handler = init({
 	assets: new Set(["favicon.png","service-worker.js"]),
 	mimeTypes: {".png":"image/png"},
 	_: {
-		entry: {"file":"immutable/start-dc405b4e.js","imports":["immutable/start-dc405b4e.js","immutable/chunks/index-bb5af0df.js","immutable/chunks/index-49e92d70.js"],"stylesheets":[]},
+		entry: {"file":"immutable/start-582c110d.js","imports":["immutable/start-582c110d.js","immutable/chunks/index-bb5af0df.js","immutable/chunks/index-49e92d70.js"],"stylesheets":[]},
 		nodes: [
 			() => Promise.resolve().then(() => require('../server/nodes/0.js')),
 			() => Promise.resolve().then(() => require('../server/nodes/1.js')),
